@@ -1,0 +1,30 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+.input-group{
+    margin-bottom: 20px
+}
+
+.btn-CRUD{
+    margin-left: 20px
+}
+
+.Texto-Borrar{
+    margin-left: 35px
+}
+
+body {
+  margin-bottom: 60px;
+}

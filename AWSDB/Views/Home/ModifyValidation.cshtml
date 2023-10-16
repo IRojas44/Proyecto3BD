@@ -1,0 +1,25 @@
+﻿
+@model CombinedViewModel
+
+<h2>Modificar Articulo</h2>
+
+<form asp-controller="Article" asp-action="ModifyValidation" method="post">
+
+    <div class="form-group">
+        <label asp-for="NewArticulo.Codigo">Inserte Codigo</label>
+        <input asp-for="NewArticulo.Codigo" class="form-control" />
+    </div>
+
+    <button asp-action="validarModificar" type="submit" class="btn btn-primary">Ok</button>
+    <button asp-action="VolverModify" type="submit" class="btn btn-primary">Cerrar</button>
+    <div class="form-group" style="display:none;">
+        <label asp-for="UserName">@Model.UserName</label>
+        <input asp-for="UserName" class="form-control" />
+    </div>
+</form>
+@if (TempData["Message"] != null)
+{
+    <script>
+        alert('@TempData["Message"]');
+    </script>
+}

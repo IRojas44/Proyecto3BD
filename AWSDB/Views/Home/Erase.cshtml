@@ -1,0 +1,59 @@
+﻿
+@model CombinedViewModel
+
+<h2>Borrar Articulo</h2>
+
+<form asp-controller="Article" asp-action="Erase" method="post">
+
+	<div class="input-group">
+		<label asp-for="NewArticulo.Codigo"></label>
+		<div class="input-group-append">
+			<label class="Texto-Borrar">@Model.NewArticulo.Codigo</label>
+		</div>
+	</div>
+
+	<div class="input-group">
+		<label asp-for="NewArticulo.Nombre"></label>
+		<div class="input-group-append">
+			<label class="Texto-Borrar">@Model.NewArticulo.Nombre</label>
+		</div>
+	</div>
+
+	<div class="input-group">
+		<label asp-for="NewArticulo.ClaseArticulo"></label>
+		<div class="input-group-append">
+			<label class="Texto-Borrar">@Model.NewArticulo.ClaseArticulo</label>
+		</div>
+	</div>
+
+	<div class="input-group">
+		<label asp-for="NewArticulo.Precio"></label>
+		<div class="input-group-append">
+			<label class="Texto-Borrar">@Model.NewArticulo.Precio</label>
+		</div>
+	</div>
+
+	<div>
+		<label>Confirme para Borrar: </label>
+		
+	</div>
+    <button asp-action="Borrar" type="submit" class="btn btn-primary">Ok</button>
+	<button asp-action="CancelarBorrar" type="submit" class="btn btn-primary">Cancelar</button>
+
+	<div class="form-group" style="display:none;">
+		<label asp-for="Codigo">@Model.Codigo</label>
+		<input asp-for="Codigo" class="form-control" />
+	</div>
+	<div class="form-group" style="display:none;">
+		<label asp-for="UserName">@Model.UserName</label>
+		<input asp-for="UserName" class="form-control" />
+	</div>
+</form>
+
+@if (TempData["Message"] != null)
+{
+    <script>
+		
+        alert('@TempData["Message"]');
+    </script>
+}
