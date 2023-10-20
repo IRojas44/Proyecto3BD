@@ -51,7 +51,7 @@ namespace AWSDB.Controllers
             return View(views);
         }
 
-        public IActionResult IndexEmpleado(string user)
+        public IActionResult IndexEmpleado(string userAdmin, string userEmpleado, bool mostrarBoton)
         {
             CombinedViewModel views = new CombinedViewModel();
 
@@ -59,7 +59,9 @@ namespace AWSDB.Controllers
             var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
             views.NewCA = getClaseArticulo;
             views.LeadDetails = getArticulo;
-            views.UserName = user;
+            views.NombreAdmin = userAdmin;
+            views.NombreEmpleado = userEmpleado;
+            views.showButton = mostrarBoton;
             return View(views);
         }
         public IActionResult IndexNombre(string user, string nombre)
@@ -518,227 +520,6 @@ namespace AWSDB.Controllers
             return false;
         }
 
-        public IActionResult validarModificar(CombinedViewModel model)
-        {
-            string codigo = model.NewArticulo.Codigo;
-            string username = model.UserName;
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-
-                using (SqlCommand command = new SqlCommand("VerificarCodigo", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-
-                    command.Parameters.AddWithValue("@inCodigo", codigo);
-                    command.Parameters.AddWithValue("@inUserName", username);
-                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
-
-                    command.ExecuteNonQuery();
-
-                    int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
-
-                    //int resultCode = 3335;
-                    connection.Close();
-                    if (resultCode == 50001)
-                    {
-                        TempData["Message"] = "Codigo no existe";
-                        return RedirectToAction("ModifyValidation", "Home", new { user = username });
-                    }
-                    else
-                    {
-                        TempData["Message"] = "Codigo de Articulo Existe";
-                        return RedirectToAction("Modify", "Home", new { code = codigo, user = username });
-                    }
-                }
-            }
-        }
-
-        public IActionResult validarBorrar(CombinedViewModel model)
-        {
-            string codigo = model.NewArticulo.Codigo;
-            string username = model.UserName;
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-
-                using (SqlCommand command = new SqlCommand("VerificarCodigoBorrar", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-
-                    command.Parameters.AddWithValue("@inCodigo", codigo);
-                    command.Parameters.AddWithValue("@inUserName", username);
-                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
-
-                    command.ExecuteNonQuery();
-
-                    int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
-
-                    //int resultCode = 3335;
-                    connection.Close();
-                    if (resultCode == 50001)
-                    {
-                        TempData["Message"] = "Codigo no existe";
-                        return RedirectToAction("EraseValidation", "Home", new { user = username });
-                    }
-                    else
-                    {
-                        TempData["Message"] = "Codigo de Articulo Existe";
-                        return RedirectToAction("Erase", "Home", new { code = codigo, user = username });
-                    }
-                }
-            }
-        }
-
-        public IActionResult Modificar(CombinedViewModel model)
-        {
-            if (validarDatos(model.NewArticulo.Codigo, model.NewArticulo.Nombre, model.NewArticulo.Precio) == false)
-            {
-                TempData["Message"] = "Ingrese la informacion del articulo de forma correcta. Nombre: Solo puede contener letras, espacio y guiones. Precio: Solo puede contener numeros enteros o decimales";
-                return RedirectToAction("Modify", "Home", new { user = model.UserName, code = model.NewArticulo.Codigo });
-            }
-            string nombre = model.NewArticulo.Nombre;
-
-            decimal precio = Convert.ToDecimal(model.NewArticulo.Precio);
-            string codigoNuevo = model.NewArticulo.Codigo;
-            string username = model.UserName;
-            string claseArticulo = Request.Form["selectClase"];
-            string codigo = model.Codigo;
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand("ModificarArticulo", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-
-                    command.Parameters.AddWithValue("@inNombre", nombre);
-                    command.Parameters.AddWithValue("@inPrecio", precio);
-                    command.Parameters.AddWithValue("@inCodigo", codigo);
-                    command.Parameters.AddWithValue("@inCodigoNuevo", codigoNuevo);
-                    command.Parameters.AddWithValue("@inClaseArticulo", claseArticulo);
-                    command.Parameters.AddWithValue("@inUserName", username);
-                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
-
-                    command.ExecuteNonQuery();
-
-                    int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
-                    connection.Close();
-                    if (resultCode == 50002)
-                    {
-                        TempData["Message"] = "No puede actualizar código de articulo con un código ya existente";
-                        return RedirectToAction("Modify", "Home", new { user = username, code = codigo });
-                    }
-                    else if (resultCode == 50003)
-                    {
-                        TempData["Message"] = "No puede actualizar nombre de articulo con un nombre ya existente";
-                        return RedirectToAction("Modify", "Home", new { user = username, code = codigo });
-                    }
-                    else if (resultCode == 0)
-                    {
-                        TempData["Message"] = "Modificacion Exitosa";
-                        return RedirectToAction("Index", "Home", new { user = username });
-                    }
-                    else
-                    {
-                        TempData["Message"] = "Surgió un error en la BD";
-                        return RedirectToAction("Modify", "Home", new { user = username, code = codigo });
-                    }
-                }
-            }
-        }
-
-        public IActionResult CancelarModificar(CombinedViewModel model)
-        {
-
-            string username = model.UserName;
-
-            string codigo = model.Codigo;
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand("CancelarProceso", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-
-
-                    command.Parameters.AddWithValue("@inCodigo", codigo);
-                    command.Parameters.AddWithValue("@inCancelar", 1);
-                    command.Parameters.AddWithValue("@inUserName", username);
-                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
-
-                    command.ExecuteNonQuery();
-
-                    int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
-                    connection.Close();
-                    return RedirectToAction("ModifyValidation", "Home", new { user = username });
-                }
-            }
-        }
-        public IActionResult Borrar(CombinedViewModel model)
-        {
-            string username = model.UserName;
-            string codigo = model.Codigo;
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand("BorrarArticulo", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-
-                    command.Parameters.AddWithValue("@inCodigo", codigo);
-                    command.Parameters.AddWithValue("@inUserName", username);
-                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
-
-                    command.ExecuteNonQuery();
-
-                    int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
-                    connection.Close();
-                    if (resultCode == 0)
-                    {
-                        TempData["Message"] = "Borrar Exitoso";
-                        return RedirectToAction("Index", "Home", new { user = username });
-                    }
-                    else
-                    {
-                        TempData["Message"] = "Surgio un error en la BD";
-                        return RedirectToAction("Index", "Home", new { user = username });
-                    }
-                }
-            }
-        }
-        public IActionResult CancelarBorrar(CombinedViewModel model)
-        {
-
-            string username = model.UserName;
-
-            string codigo = model.Codigo;
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand("CancelarProceso", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-
-
-                    command.Parameters.AddWithValue("@inCodigo", codigo);
-                    command.Parameters.AddWithValue("@inCancelar", 2);
-                    command.Parameters.AddWithValue("@inUserName", username);
-                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
-
-                    command.ExecuteNonQuery();
-
-                    int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
-                    connection.Close();
-                    return RedirectToAction("EraseValidation", "Home", new { user = username });
-                }
-            }
-        }
         public async Task<IActionResult> UploadFile(ArchivoViewModel model)
         {
             if (model.Archivo != null && model.Archivo.Length > 0)
@@ -789,9 +570,8 @@ namespace AWSDB.Controllers
             string UsernameEmpleado = model.NombreEmpleado;
             string passwordEmpleado = model.PasswordEmpleado;
 
-            var showButton = true;
 
-            return RedirectToAction("IndexEmpleado", "Home", new { user = UsernameAdmin, showButton = true });
+            return RedirectToAction("IndexEmpleado", "Home", new { userAdmin = UsernameAdmin, userEmpleado = UsernameEmpleado, mostrarBoton=true});
         }
 
     }    
