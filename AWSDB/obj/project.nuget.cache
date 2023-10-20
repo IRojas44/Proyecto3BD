@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "O0lIe3cNyuVbkYotXsB4V7w2jyBhtB3AiiLojNWHMBVIkxXCp/vPCIaHRIoUZ6x/20MBnQXqltW6ZnwHtev6ng==",
+  "dgSpecHash": "xxTd3qNtu3G52Wou2g8wf1xBVv6R8jzAsfw4flRGCmynNDAKl1sG9u94Tq9kdMYfVoAKNty/EMWTkD0m+1qmwA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\isasc\\Documents\\GitHub\\ProyectoBD\\AWSDB\\AWSDB.csproj",
+  "projectFilePath": "C:\\Users\\isasc\\Documents\\GitHub\\Proyecto3BD\\AWSDB\\AWSDB.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\isasc\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\isasc\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",

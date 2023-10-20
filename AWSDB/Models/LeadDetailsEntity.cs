@@ -33,10 +33,23 @@ public class CombinedViewModel
 
     public List<AWSDB.Models.ClaseArticulo> NewCA { get; set; }
 
+    public bool showButton { get; set; }
 
-	public string Codigo { get; set;}
+    public string Codigo { get; set;}
 
 	public string UserName { get; set;}
+
+    [Required]
+    public string NombreAdmin { get; set; }
+
+    [Required]
+    public string PasswordAdmin { get; set; }
+
+    [Required]
+    public string NombreEmpleado { get; set; }
+
+    [Required]
+    public string PasswordEmpleado { get; set; }
 }
 
 public class Articulo
@@ -70,4 +83,10 @@ public class Usuario
 
 	[Required]
 	public string Password { get; set; }
+
+    [Required]
+    public string NombreEmpleado { get; set; }
+
+    [Required]
+    public string PasswordEmpleado { get; set; }
 }

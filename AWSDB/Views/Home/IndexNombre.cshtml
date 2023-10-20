@@ -20,6 +20,7 @@
                             <td>@item.Nombre</td>
                             <td>@item.ClaseArticulo</td>
                             <td>@item.Precio</td>
+                            <td><button asp-action="" type="submit" class="btn btn-primary">Editar este empleado/a</button></td>
                         </tr>
                     }
                 </tbody>
@@ -33,33 +34,6 @@
                         </div>
                     </div>
 
-                    <div class="input-group">
-                        <label asp-for="NewArticulo.Cantidad"></label>
-                        <input asp-for="NewArticulo.Cantidad" class="form-control" class="col-8" />
-                        <div class="input-group-append">
-                            <button asp-action="IndexC" type="submit" class="btn btn-primary">Buscar por cantidad</button>
-
-                        </div>
-                    </div>
-
-					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text">
-                                <select name="selectClase" class="form-control">
-                                    @{
-                                        var first = Model.NewCA.ElementAtOrDefault(0);
-                                        <option value="@first.Nombre">Seleccione una opcion</option>
-                                    }
-
-                                    @foreach (var item in Model.NewCA)
-                                    {
-                                        <option value="@item.Nombre">@item.Nombre</option>
-                                    }
-                                </select>
-                                <button asp-action="IndexCl" type="submit" class="btn btn-primary">Buscar por Articulo</button>
-							</div>
-						</div>
-					</div>
 
 					<div class="input-group-append">
 						<button asp-action="CreateV" type="submit" class="btn btn-primary">Insertar</button>

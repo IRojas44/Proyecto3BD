@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\isasc\\Documents\\GitHub\\ProyectoBD\\AWSDB\\AWSDB.csproj": {}
+    "C:\\Users\\isasc\\Documents\\GitHub\\Proyecto3BD\\AWSDB\\AWSDB.csproj": {}
   },
   "projects": {
-    "C:\\Users\\isasc\\Documents\\GitHub\\ProyectoBD\\AWSDB\\AWSDB.csproj": {
+    "C:\\Users\\isasc\\Documents\\GitHub\\Proyecto3BD\\AWSDB\\AWSDB.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\isasc\\Documents\\GitHub\\ProyectoBD\\AWSDB\\AWSDB.csproj",
+        "projectUniqueName": "C:\\Users\\isasc\\Documents\\GitHub\\Proyecto3BD\\AWSDB\\AWSDB.csproj",
         "projectName": "AWSDB",
-        "projectPath": "C:\\Users\\isasc\\Documents\\GitHub\\ProyectoBD\\AWSDB\\AWSDB.csproj",
+        "projectPath": "C:\\Users\\isasc\\Documents\\GitHub\\Proyecto3BD\\AWSDB\\AWSDB.csproj",
         "packagesPath": "C:\\Users\\isasc\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\isasc\\Documents\\GitHub\\ProyectoBD\\AWSDB\\obj\\",
+        "outputPath": "C:\\Users\\isasc\\Documents\\GitHub\\Proyecto3BD\\AWSDB\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\isasc\\AppData\\Roaming\\NuGet\\NuGet.Config",

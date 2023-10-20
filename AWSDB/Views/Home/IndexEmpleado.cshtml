@@ -1,9 +1,9 @@
 ﻿@model CombinedViewModel
-<form asp-controller="Index" method="post">
+<form asp-controller="IndexEmpleado" method="post">
     <div>
-        <label class="Titulo-IndexU">Bienvenido/a administrador</label>
+        <label class="Titulo-IndexU">Bienvenido/a empleado</label>
     </div>
-
+   
     <div class="row">
         <div class="table-responsive">
             <table class="table table-striped" style="overflow-y:auto;">
@@ -15,7 +15,7 @@
                         <th>Precio</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style="display:none;">
 
                     @foreach (var item in Model.LeadDetails)
                     {
@@ -24,25 +24,26 @@
                             <td>@item.Nombre</td>
                             <td>@item.ClaseArticulo</td>
                             <td>@item.Precio</td>
-                            <td><button asp-action="EditarV" type="submit" class="btn btn-primary">Editar este empleado/a</button></td>
                         </tr>
-
                     }
+
                 </tbody>
                 <tbody>
 
-                    <div class="input-group">
-                        <label asp-for="NewArticulo.Nombre"></label>
-                        <input asp-for="NewArticulo.Nombre" class="form-control" class="col-8" />
-                        <div class="input-group-append">
-                            <button asp-action="IndexN" type="submit" class="btn btn-primary">Buscar por nombre</button>
-                        </div>
-                    </div>
+                    
 
-            
 					<div class="input-group-append">
-						
+                        <button asp-action="" type="submit" class="btn btn-primary">Consultar planilla semanal</button>
+                        <button asp-action="" type="submit" class="btn btn-primary">Consultar planilla mensual</button>
 						<button asp-action="VolverLogin" type="submit" class="btn btn-primary">Salir</button>
+                        @if (Model.showButton == true)
+                        {
+                            <button asp-action="" id="botonRegresar" type="submit" class="btn btn-primary">Regresar</button>
+                        }
+                        else
+                        {
+                            <button asp-action="" id="botonRegresar" type="submit" class="btn btn-primary" style="display:none;">Regresar</button>
+                        }
 					</div>
 
 				</tbody>

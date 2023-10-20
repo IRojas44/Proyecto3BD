@@ -1,9 +1,11 @@
 ﻿
 @model CombinedViewModel
 
-<h2>Insertar Nuevo Empleado</h2>
+<h2>Editar Empleado</h2>
 
-<form asp-controller="Article" asp-action="Create" method="post">
+<form asp-controller="Article" asp-action="Editar" method="post">
+    <button asp-action="" type="submit" class="btn btn-primary">Eliminar Empleado/a</button>
+    <button asp-action="prueba" type="submit" class="btn btn-primary">Impersonar Empleado/a</button>
 
     <div class="form-group">
         <label asp-for="NewArticulo.Nombre">Nombre del empleado/a</label>
@@ -74,12 +76,19 @@
         </div>
     </div>
 
-    <button asp-action="Insertar" type="submit" class="btn btn-primary">Insertar</button>
-    <button asp-action="VolverCreate" type="submit" class="btn btn-primary">Cerrar</button>
+    <button asp-action="" type="submit" class="btn btn-primary">Insertar</button>
+    <button asp-action="CancelarModificar" type="submit" class="btn btn-primary">Cerrar</button>
+
+
+    <div class="form-group" style="display:none;">
+        <label asp-for="Codigo">@Model.Codigo</label>
+        <input asp-for="Codigo" class="form-control" />
+    </div>
     <div class="form-group" style="display:none;">
         <label asp-for="UserName">@Model.UserName</label>
         <input asp-for="UserName" class="form-control" />
     </div>
+
 </form>
 @if (TempData["Message"] != null)
 {

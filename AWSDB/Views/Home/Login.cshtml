@@ -1,17 +1,17 @@
-﻿@model Usuario
+﻿@model CombinedViewModel
 
 <h2>Log In</h2>
 
 <form asp-controller="Home" asp-action="Login" method="post">
 
     <div class="form-group">
-        <label asp-for="Nombre"></label>
-        <input asp-for="Nombre" class="form-control" />
+        <label asp-for="NombreAdmin">Ingrese su nombre de administrador/empleado</label>
+        <input asp-for="NombreAdmin" class="form-control" />
     </div>
 
     <div class="form-group">
-        <label asp-for="Password"></label>
-        <input asp-for="Password" class="form-control" />
+        <label asp-for="PasswordAdmin">Ingrese su contrasenna</label>
+        <input asp-for="PasswordAdmin" class="form-control" />
     </div>
 
     <button asp-action="Ingresar" type="submit" class="btn btn-primary">Ingresar</button>
