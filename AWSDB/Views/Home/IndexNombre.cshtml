@@ -13,16 +13,15 @@
                 </thead>
                 <tbody>
 
-                    @foreach (var item in Model.LeadDetails)
-                    {
-                        <tr>
-                            <td>@item.Codigo</td>
-                            <td>@item.Nombre</td>
-                            <td>@item.ClaseArticulo</td>
-                            <td>@item.Precio</td>
-                            <td><button asp-action="" type="submit" class="btn btn-primary">Editar este empleado/a</button></td>
-                        </tr>
-                    }
+                    @*@foreach (var item in Model.LeadDetails){
+                    <tr>
+                    <td>@item.Codigo</td>
+                    <td>@item.Nombre</td>
+                    <td>@item.ClaseArticulo</td>
+                    <td>@item.Precio</td>
+                    <td><button asp-action="EditarV" type="submit" class="btn btn-primary">Editar este empleado/a</button></td>
+                    </tr>
+                    }*@
                 </tbody>
                 <tbody>
 
@@ -34,17 +33,14 @@
                         </div>
                     </div>
 
+                    <div class="input-group-append">
 
-					<div class="input-group-append">
-						<button asp-action="CreateV" type="submit" class="btn btn-primary">Insertar</button>
-						<button asp-action="ModifyV" type="submit" class="btn btn-primary">Modificar</button>
-						<button asp-action="EraseV" type="submit" class="btn btn-primary">Borrar</button>
-						<button asp-action="VolverLogin" type="submit" class="btn btn-primary">Salir</button>
-					</div>
+                        <button asp-action="VolverLogin" type="submit" class="btn btn-primary">Salir</button>
+                    </div>
 
-				</tbody>
-			</table>
-		</div>
+                </tbody>
+            </table>
+        </div>
 	</div>
     <div class="form-group" style="display:none;">
         <label asp-for="UserName">@Model.UserName</label>

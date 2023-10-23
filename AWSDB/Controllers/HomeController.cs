@@ -26,7 +26,7 @@ namespace AWSDB.Controllers
             _db = db;
             _logger = logger;
             _webHostEnvironment = webHostEnvironment;
-            connectionString = "server=tecdb.ctfxom3mv69f.us-east-2.rds.amazonaws.com,1433;Database=WebLeads;TrustServerCertificate=True;User ID=admin;Password=tecaws123;";
+            connectionString = "server=tecdb.ctfxom3mv69f.us-east-2.rds.amazonaws.com,1433;Database=WebLeads_2;TrustServerCertificate=True;User ID=admin;Password=tecaws123;";
         }
 
         public IActionResult Privacy()
@@ -39,15 +39,16 @@ namespace AWSDB.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        public IActionResult Index(string user)
+        public IActionResult Index(string userAdmin, string userEmpleado)
         {
             CombinedViewModel views = new CombinedViewModel();
 
-            var getArticulo = _db.Articulo.FromSqlRaw("ObtenerArticulos").ToList();
-            var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
-            views.NewCA = getClaseArticulo;
-            views.LeadDetails = getArticulo;
-            views.UserName = user;
+            //var getArticulo = _db.Articulo.FromSqlRaw("ObtenerArticulos").ToList();
+            //var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
+            //views.NewCA = getClaseArticulo;
+            //views.LeadDetails = getArticulo;
+            views.NombreAdmin = userAdmin;
+            views.NombreEmpleado = userEmpleado;
             return View(views);
         }
 
@@ -55,10 +56,10 @@ namespace AWSDB.Controllers
         {
             CombinedViewModel views = new CombinedViewModel();
 
-            var getArticulo = _db.Articulo.FromSqlRaw("ObtenerArticulos").ToList();
-            var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
-            views.NewCA = getClaseArticulo;
-            views.LeadDetails = getArticulo;
+            //var getArticulo = _db.Articulo.FromSqlRaw("ObtenerArticulos").ToList();
+            //var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
+            //views.NewCA = getClaseArticulo;
+            //views.LeadDetails = getArticulo;
             views.NombreAdmin = userAdmin;
             views.NombreEmpleado = userEmpleado;
             views.showButton = mostrarBoton;
@@ -111,120 +112,7 @@ namespace AWSDB.Controllers
             }
             return RedirectToAction("IndexNombre", "Home", new { user = model.UserName, nombre = model.NewArticulo.Nombre });
         }
-        public IActionResult IndexCantidad(string user, int cantidad)
 
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand("FiltroCantidad", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@inUserName", user);
-                    command.Parameters.AddWithValue("@inCantidad", cantidad);
-                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        List<LeadDetailsEntity> ListArticulo = new List<LeadDetailsEntity>();
-                        while (reader.Read())
-                        {
-                            LeadDetailsEntity resultArticulo = new LeadDetailsEntity();
-                            resultArticulo.Codigo = reader["Codigo"].ToString();
-                            resultArticulo.Nombre = reader["Nombre"].ToString();
-                            resultArticulo.ClaseArticulo = reader["ClaseArticulo"].ToString();
-                            resultArticulo.Precio = Convert.ToDecimal(reader["Precio"].ToString());
-
-                            ListArticulo.Add(resultArticulo);
-                        }
-
-                        int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
-                        connection.Close();
-
-
-                        CombinedViewModel views = new CombinedViewModel();
-                        var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
-                        views.NewCA = getClaseArticulo;
-                        views.LeadDetails = ListArticulo;
-                        views.UserName = user;
-                        return View(views);
-                    }
-                }
-            }
-        }
-        public IActionResult IndexC(CombinedViewModel model)
-        {
-            if (model.NewArticulo.Cantidad == null)
-            {
-                return RedirectToAction("Index", "Home", new { user = model.UserName });
-            }
-            if (validarEntero(model.NewArticulo.Cantidad) == true)
-            {
-                return RedirectToAction("IndexCantidad", "Home", new { user = model.UserName, cantidad = Convert.ToInt32(model.NewArticulo.Cantidad) });
-            }
-            TempData["Message"] = "La cantidad debe de ser un numero entero";
-            return RedirectToAction("Index", "Home", new { user = model.UserName });
-        }
-        public IActionResult IndexClase(string user, string clase)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand("FiltroClase", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@inUserName", user);
-                    command.Parameters.AddWithValue("@inNombreClase", clase);
-                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        List<LeadDetailsEntity> ListArticulo = new List<LeadDetailsEntity>();
-                        while (reader.Read())
-                        {
-                            LeadDetailsEntity resultArticulo = new LeadDetailsEntity();
-                            resultArticulo.Codigo = reader["Codigo"].ToString();
-                            resultArticulo.Nombre = reader["Nombre"].ToString();
-                            resultArticulo.ClaseArticulo = reader["ClaseArticulo"].ToString();
-                            resultArticulo.Precio = Convert.ToDecimal(reader["Precio"].ToString());
-
-                            ListArticulo.Add(resultArticulo);
-                        }
-
-                        int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
-                        connection.Close();
-
-
-                        CombinedViewModel views = new CombinedViewModel();
-                        var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
-                        views.NewCA = getClaseArticulo;
-                        views.LeadDetails = ListArticulo;
-                        views.UserName = user;
-                        return View(views);
-                    }
-                }
-            }
-        }
-        public IActionResult IndexCl(CombinedViewModel model)
-        {
-            return RedirectToAction("IndexClase", "Home", new { user = model.UserName, clase = Request.Form["selectClase"] });
-        }
-        /*public IActionResult Index()
-        {
-            CombinedViewModel views = new CombinedViewModel();
-            var getArticulo = (List<LeadDetailsEntity>)ViewBag.Articulos;
-            var getClaseArticulo = (List<ClaseArticulo>)ViewBag.ClaseArticulos;
-            views.NewCA = getClaseArticulo;
-            views.LeadDetails = getArticulo;
-            return View(views);
-        }
-
-     
-        public CombinedViewModel IndexFiltro(List<LeadDetailsEntity> listaArticulo)
-        {
-            CombinedViewModel views = new CombinedViewModel();
-            views.LeadDetails = listaArticulo;
-
-            return views;
-        }*/
         public IActionResult Volver()
         {
             return RedirectToAction("Index", "Home");
@@ -240,7 +128,13 @@ namespace AWSDB.Controllers
                 {
                     command.CommandType = CommandType.StoredProcedure;
 
-                    command.Parameters.AddWithValue("@inUserName", model.UserName);
+                    if(model.NombreAdmin != "") {
+                        command.Parameters.AddWithValue("@inUserName", model.NombreAdmin);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@inUserName", model.NombreEmpleado);
+                    }
                     command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
                     command.ExecuteNonQuery();
 
@@ -329,16 +223,6 @@ namespace AWSDB.Controllers
             return RedirectToAction("EditarV", "Home");
         }
 
-        public IActionResult EraseValidation(string user)
-        {
-            CombinedViewModel views = new CombinedViewModel();
-            views.UserName = user;
-            return View(views);
-        }
-        public IActionResult EraseV(CombinedViewModel model)
-        {
-            return RedirectToAction("EraseValidation", "Home", new { user = model.UserName });
-        }
         public IActionResult Erase(string user, string code)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -375,10 +259,6 @@ namespace AWSDB.Controllers
                 }
             }
 
-        }
-        public IActionResult EraseArticle()
-        {
-            return RedirectToAction("Erase", "Home");
         }
 
         public IActionResult VolverErase(CombinedViewModel model)
@@ -420,24 +300,29 @@ namespace AWSDB.Controllers
                     command.Parameters.AddWithValue("@inNombre", Username);
                     command.Parameters.AddWithValue("@inPassword", password);
                     command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    command.Parameters.Add("@outAdminOEmpleado", SqlDbType.Int).Direction = ParameterDirection.Output;
 
                     command.ExecuteNonQuery();
 
                     int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
+                    int adminOEmpleado = Convert.ToInt32(command.Parameters["@outAdminOEmpleado"].Value);
 
                     //int resultCode = 3335;
                     connection.Close();
-                    if (resultCode != 50002)
+                    if (resultCode == 50002)
                     {
                         TempData["Message"] = "Combinacion de usuario/password no existe en la BD";
                         return RedirectToAction("Login", "Home");
                     }
-                    else
+                    else if (adminOEmpleado == 50004){
+                        TempData["Message"] = "Login de administrador exitoso";
+                        return RedirectToAction("Index", "Home", new { userAdmin = Username, userEmpleado = "" });
+                    }
+                    else 
                     {
                         TempData["Message"] = "Login exitoso";
+                        return RedirectToAction("IndexEmpleado", "Home", new { userAdmin = "", userEmpleado = Username });
 
-
-                        return RedirectToAction("Index", "Home", new { user = Username });
                     }
                 }
             }
