@@ -9,7 +9,11 @@ namespace AWSDB.Data
 
         public DbSet<LeadDetailsEntity> Articulo { get; set; }
 
-        public DbSet<ClaseArticulo> ClaseArticulo { get; set; }
+        public DbSet<TipoDocumento> TipoDocumento { get; set; }
+
+        public DbSet<TipoPuesto> TipoPuesto { get; set; }
+
+        public DbSet<TipoDepartamento> TipoDepartamento { get; set; }
     }
 
 }

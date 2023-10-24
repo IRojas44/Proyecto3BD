@@ -43,10 +43,14 @@ namespace AWSDB.Controllers
         {
             CombinedViewModel views = new CombinedViewModel();
 
-            //var getArticulo = _db.Articulo.FromSqlRaw("ObtenerArticulos").ToList();
-            //var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
-            //views.NewCA = getClaseArticulo;
-            //views.LeadDetails = getArticulo;
+            var getEmpleados = _db.Articulo.FromSqlRaw("ObtenerEmpleados").ToList();
+            var getTipoDocumento = _db.TipoDocumento.FromSqlRaw("ObtenerTipoDocumento").ToList(); //ObtenerTipoDocumento //ObtenerPuesto //ObtenerDepartamento
+            var getPuesto = _db.TipoPuesto.FromSqlRaw("ObtenerPuesto").ToList();
+            var getDepartamento = _db.TipoDepartamento.FromSqlRaw("ObtenerDepartamento").ToList();
+            views.NewTD = getTipoDocumento;
+            views.NewP = getPuesto;
+            views.NewD = getDepartamento;
+            views.LeadDetails = getEmpleados;
             views.NombreAdmin = userAdmin;
             views.NombreEmpleado = userEmpleado;
             return View(views);
@@ -78,16 +82,14 @@ namespace AWSDB.Controllers
                     command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        List<LeadDetailsEntity> ListArticulo = new List<LeadDetailsEntity>();
+                        List<LeadDetailsEntity> ListEmpleados = new List<LeadDetailsEntity>();
                         while (reader.Read())
                         {
-                            LeadDetailsEntity resultArticulo = new LeadDetailsEntity();
-                            resultArticulo.Codigo = reader["Codigo"].ToString();
-                            resultArticulo.Nombre = reader["Nombre"].ToString();
-                            resultArticulo.ClaseArticulo = reader["ClaseArticulo"].ToString();
-                            resultArticulo.Precio = Convert.ToDecimal(reader["Precio"].ToString());
+                            LeadDetailsEntity resultEmpleado = new LeadDetailsEntity();
+                            resultEmpleado.Nombre = reader["Nombre"].ToString();
+                            resultEmpleado.Puesto = reader["Puesto"].ToString();
 
-                            ListArticulo.Add(resultArticulo);
+                            ListEmpleados.Add(resultEmpleado);
                         }
 
                         int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
@@ -95,10 +97,8 @@ namespace AWSDB.Controllers
 
 
                         CombinedViewModel views = new CombinedViewModel();
-                        var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
-                        views.NewCA = getClaseArticulo;
-                        views.LeadDetails = ListArticulo;
-                        views.UserName = user;
+                        views.LeadDetails = ListEmpleados;
+                        views.NombreAdmin = user;
                         return View(views);
                     }
                 }
@@ -106,11 +106,11 @@ namespace AWSDB.Controllers
         }
         public IActionResult IndexN(CombinedViewModel model)
         {
-            if (model.NewArticulo.Nombre == null)
+            if (model.NewEmpleado.Nombre == null)
             {
-                return RedirectToAction("Index", "Home", new { user = model.UserName });
+                return RedirectToAction("Index", "Home", new { userAdmin = model.NombreAdmin, userEmpleado = model.NombreEmpleado});
             }
-            return RedirectToAction("IndexNombre", "Home", new { user = model.UserName, nombre = model.NewArticulo.Nombre });
+            return RedirectToAction("IndexNombre", "Home", new { user = model.NombreAdmin, nombre = model.NewEmpleado.Nombre});
         }
 
         public IActionResult Volver()
@@ -152,9 +152,9 @@ namespace AWSDB.Controllers
 
         public IActionResult Create(string user)
         {
-            var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
+            //var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
             CombinedViewModel views = new CombinedViewModel();
-            views.NewCA = getClaseArticulo;
+            //views.NewCA = getClaseArticulo;
             views.UserName = user;
             return View(views);
         }
@@ -187,9 +187,9 @@ namespace AWSDB.Controllers
 
         public IActionResult Modify(string user, string code)
         {
-            var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
+            //var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
             CombinedViewModel views = new CombinedViewModel();
-            views.NewCA = getClaseArticulo;
+            //views.NewCA = getClaseArticulo;
             views.Codigo = code;
             views.UserName = user;
             return View(views);
@@ -205,18 +205,24 @@ namespace AWSDB.Controllers
             return RedirectToAction("Index", "Home", new { user = model.UserName });
         }
 
-        public IActionResult Editar(string user)
+        public IActionResult Editar(string user, int IdEmpleado)
         {
-            var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
+            
             CombinedViewModel views = new CombinedViewModel();
-            views.NewCA = getClaseArticulo;
+            var getTipoDocumento = _db.TipoDocumento.FromSqlRaw("ObtenerTipoDocumento").ToList(); //ObtenerTipoDocumento //ObtenerPuesto //ObtenerDepartamento
+            var getPuesto = _db.TipoPuesto.FromSqlRaw("ObtenerPuesto").ToList();
+            var getDepartamento = _db.TipoDepartamento.FromSqlRaw("ObtenerDepartamento").ToList();
+            views.NewTD = getTipoDocumento;
+            views.NewP = getPuesto;
+            views.NewD = getDepartamento;
+            views.IdEmpleado = IdEmpleado;
             views.UserName = user;
             return View(views);
         }
 
-        public IActionResult EditarV(CombinedViewModel model)
+        public IActionResult EditarV(int id ,CombinedViewModel model)
         {
-            return RedirectToAction("Editar", "Home", new { user = model.UserName });
+            return RedirectToAction("Editar", "Home", new { user = model.UserName, IdEmpleado = id});
         }
         public IActionResult EditarEmpleado()
         {
@@ -405,7 +411,46 @@ namespace AWSDB.Controllers
             return false;
         }
 
-        public async Task<IActionResult> UploadFile(ArchivoViewModel model)
+        public async Task<IActionResult> UploadCatalogo(ArchivoViewModel model)
+        {
+            if (model.Archivo != null && model.Archivo.Length > 0)
+            {
+                // Leer el contenido del archivo XML
+                using (var reader = new StreamReader(model.Archivo.OpenReadStream()))
+                {
+                    string xmlContent = await reader.ReadToEndAsync();
+
+                    // Llamar al Stored Procedure con el contenido XML como parámetro
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        using (SqlCommand command = new SqlCommand("ProcesarXmlCatalogo", connection))
+                        {
+                            command.CommandType = CommandType.StoredProcedure;
+
+                            // Pasa el contenido XML como parámetro
+                            command.Parameters.AddWithValue("@inDatos", xmlContent);
+
+                            // Configura el parámetro de salida para capturar la contraseña
+                            command.Parameters.Add("OutResult", SqlDbType.VarChar, 128).Direction = ParameterDirection.Output;
+
+                            command.ExecuteNonQuery();
+
+
+                            // Realiza acciones adicionales si es necesario
+                            connection.Close();
+                            TempData["Message"] = "Carga de archivo exitosa y procesamiento del catalogo XML completado.";
+                            return RedirectToAction("Login"); // Redirecciona a la página principal u otra página
+                        }
+                    }
+                }
+            }
+
+            // Maneja el caso en que no se seleccionó ningún archivo
+            TempData["Message"] = "Por favor, seleccione un archivo.";
+            return RedirectToAction("VistaUpload");
+        }
+        public async Task<IActionResult> UploadSimular(ArchivoViewModel model)
         {
             if (model.Archivo != null && model.Archivo.Length > 0)
             {

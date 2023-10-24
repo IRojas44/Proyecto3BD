@@ -15,16 +15,16 @@
     <div class="input-group">
         <div class="input-group-prepend">
             <div class="input-group-text">
-                <select name="selectClase" class="form-control">
-                    @*@{
-                        var first = Model.NewCA.ElementAtOrDefault(0);
-                        <option value="@first.Nombre">Tipo de identificacion</option>
+                <select name="selectTipoDocumento" class="form-control">
+                    @{
+                        var first = Model.NewTD.ElementAtOrDefault(0);
+                        <option value="@first.Nombre">Tipo de Documento de Identidad</option>
                     }
 
-                    @foreach (var item in Model.NewCA)
+                    @foreach (var item in Model.NewTD)
                     {
                         <option value="@item.Nombre">@item.Nombre</option>
-                    }*@
+                    }
                 </select>
             </div>
         </div>
@@ -44,15 +44,15 @@
         <div class="input-group-prepend">
             <div class="input-group-text">
                 <select name="selectClase" class="form-control">
-                    @*@{
-                        var first2 = Model.NewCA.ElementAtOrDefault(0);
+                    @{
+                        var first2 = Model.NewP.ElementAtOrDefault(0);
                         <option value="@first.Nombre">Puesto de trabajo</option>
                     }
 
-                    @foreach (var item in Model.NewCA)
+                    @foreach (var item in Model.NewP)
                     {
                         <option value="@item.Nombre">@item.Nombre</option>
-                    }*@
+                    }
                 </select>
             </div>
         </div>
@@ -62,15 +62,15 @@
         <div class="input-group-prepend">
             <div class="input-group-text">
                 <select name="selectClase" class="form-control">
-                    @*@{
-                        var first3 = Model.NewCA.ElementAtOrDefault(0);
+                    @{
+                        var first3 = Model.NewD.ElementAtOrDefault(0);
                         <option value="@first.Nombre">Departamento</option>
                     }
 
-                    @foreach (var item in Model.NewCA)
+                    @foreach (var item in Model.NewD)
                     {
                         <option value="@item.Nombre">@item.Nombre</option>
-                    }*@
+                    }
                 </select>
             </div>
         </div>

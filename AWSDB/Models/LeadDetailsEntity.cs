@@ -11,13 +11,25 @@ namespace AWSDB.Models
 	{
 		[Key]
 		public int id { get; set; }
-		public string Codigo { get; set; }
 		public string Nombre { get; set; }
-		public string ClaseArticulo { get; set; }
-		public decimal Precio { get; set; }
+		public string Puesto { get; set; }
 	}
 
-    public class ClaseArticulo
+    public class TipoDocumento
+    {
+        [Key]
+        public int id { get; set; }
+        public string Nombre { get; set; }
+    }
+
+    public class TipoPuesto
+    {
+        [Key]
+        public int id { get; set; }
+        public string Nombre { get; set; }
+    }
+
+    public class TipoDepartamento
     {
         [Key]
         public int id { get; set; }
@@ -31,7 +43,13 @@ public class CombinedViewModel
 
 	public Articulo NewArticulo { get; set; }
 
-    public List<AWSDB.Models.ClaseArticulo> NewCA { get; set; }
+    public Empleado NewEmpleado { get; set; }
+
+    public List<AWSDB.Models.TipoDocumento> NewTD { get; set; }
+
+    public List<AWSDB.Models.TipoPuesto> NewP { get; set; }
+
+    public List<AWSDB.Models.TipoDepartamento> NewD { get; set; }
 
     public bool showButton { get; set; }
 
@@ -50,6 +68,8 @@ public class CombinedViewModel
 
     [Required]
     public string PasswordEmpleado { get; set; }
+
+    public int IdEmpleado { get; set; }
 }
 
 public class Articulo
@@ -70,6 +90,19 @@ public class Articulo
 
 	[Required]
 	public string Cantidad { get; set; }
+}
+
+public class Empleado
+{
+    [Required]
+    public int id { get; set; }
+
+    [Required]
+    public string Nombre { get; set; }
+
+    [Required]
+    public string Puesto { get; set; }
+
 }
 public class ArchivoViewModel
 {

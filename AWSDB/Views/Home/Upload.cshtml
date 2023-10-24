@@ -1,9 +1,9 @@
 ﻿@model AWSDB.Models.LeadDetailsEntity
 <form asp-controller="Home" method="post" enctype="multipart/form-data">
-	<div class="form-group">
-		<label for="archivo">Seleccione un archivo:</label>
-		<input type="file" name="Archivo" id="Archivo" class="form-control-file">
-	</div>
-	<button asp-action=""  type="submit" class="btn btn-primary">Catalogo</button>
-	<button asp-action=""  type="submit" class="btn btn-primary">Simular</button>
+    <div class="form-group">
+        <label for="archivo">Seleccione un archivo:</label>
+        <input type="file" name="Archivo" id="Archivo" class="form-control-file">
+    </div>
+    <button asp-action="UploadCatalogo" type="submit" class="btn btn-primary">Catalogo</button>
+    <button asp-action="" type="submit" class="btn btn-primary">Simular</button>
 </form>
