@@ -325,13 +325,22 @@ namespace AWSDB.Controllers
 
                     int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
                     connection.Close();
-            
+
                     if (resultCode == 50002)
                     {
                         TempData["Message"] = "Valor del Documento Duplicado";
-                        return RedirectToAction("Create", "Home", new { userAdmin = username });
+                        return RedirectToAction("Editar", "Home", new { userAdmin = username});
                     }
-                    return RedirectToAction("Index", "Home", new { userAdmin = username, userEmpleado = "" });
+                    else if (resultCode == 0)
+                    {
+                        TempData["Message"] = "Se inserto correctamente";
+                        return RedirectToAction("Index", "Home", new { userAdmin = username, userEmpleado = "" });
+                    }
+                    else
+                    {
+                        TempData["Message"] = "Error en la base de datos";
+                        return RedirectToAction("Editar", "Home", new { userAdmin = username});
+                    }
                 }
             }
         }
@@ -359,20 +368,29 @@ namespace AWSDB.Controllers
                     command.Parameters.AddWithValue("@inValorTipoDocumentoNuevo", valorIdentificacion);
                     command.Parameters.AddWithValue("@inPuesto", puesto);
                     command.Parameters.AddWithValue("@inDepartamento", departamanto);
-                    command.Parameters.AddWithValue("@IdEmpleado", IdEmpleado);
+                    command.Parameters.AddWithValue("@inIdEmpleado", IdEmpleado);
                     command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
 
                     command.ExecuteNonQuery();
 
                     int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
                     connection.Close();
-                    
+
                     if (resultCode == 50002)
                     {
                         TempData["Message"] = "Valor del Documento Duplicado";
                         return RedirectToAction("Editar", "Home", new { userAdmin = username, IdEmpleado = IdEmpleado });
                     }
-                    return RedirectToAction("Index", "Home", new { userAdmin = username, userEmpleado = "" });
+                    else if (resultCode ==0) {
+                        TempData["Message"] = "Se inserto correctamente";
+                        return RedirectToAction("Index", "Home", new { userAdmin = username, userEmpleado = "" });
+                    }
+                    else
+                    {
+                        TempData["Message"] = "Error en la base de datos";
+                        return RedirectToAction("Editar", "Home", new { userAdmin = username, IdEmpleado = IdEmpleado });
+                    }
+           
                 }
             }
         }
