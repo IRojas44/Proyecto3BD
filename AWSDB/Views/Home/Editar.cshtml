@@ -3,22 +3,23 @@
 
 <h2>Editar Empleado</h2>
 
-<form asp-controller="Article" asp-action="Editar" method="post">
+<form  asp-action="Editar" method="post">
     <button asp-action="" type="submit" class="btn btn-primary">Eliminar Empleado/a</button>
     <button asp-action="prueba" type="submit" class="btn btn-primary">Impersonar Empleado/a</button>
 
     <div class="form-group">
-        <label asp-for="NewArticulo.Nombre">Nombre del empleado/a</label>
-        <input asp-for="NewArticulo.Nombre" class="form-control" />
+        <label asp-for="NuevoEmpleado.Nombre">Nombre del empleado/a</label>
+        <input asp-for="NuevoEmpleado.Nombre" class="form-control" />
     </div>
 
     <div class="input-group">
         <div class="input-group-prepend">
             <div class="input-group-text">
-                <select name="selectTipoDocumento" class="form-control">
+                <select name="selectTipoId" class="form-control">
+
                     @{
                         var first = Model.NewTD.ElementAtOrDefault(0);
-                        <option value="@first.Nombre">Tipo de Documento de Identidad</option>
+                        <option value="@first.Nombre">Tipo de identificacion</option>
                     }
 
                     @foreach (var item in Model.NewTD)
@@ -31,19 +32,15 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="NewArticulo.Nombre">Valor de la identificacion</label>
-        <input asp-for="NewArticulo.Nombre" class="form-control" />
+        <label asp-for="NuevoEmpleado.ValorIdentidad">Valor de la identificacion</label>
+        <input asp-for="NuevoEmpleado.ValorIdentidad" class="form-control" />
     </div>
 
-    <div class="form-group">
-        <label asp-for="NewArticulo.Nombre">Fecha de nacimiento</label>
-        <input asp-for="NewArticulo.Nombre" class="form-control" />
-    </div>
 
     <div class="input-group">
         <div class="input-group-prepend">
             <div class="input-group-text">
-                <select name="selectClase" class="form-control">
+                <select name="selectPuesto" class="form-control">
                     @{
                         var first2 = Model.NewP.ElementAtOrDefault(0);
                         <option value="@first.Nombre">Puesto de trabajo</option>
@@ -61,7 +58,7 @@
     <div class="input-group">
         <div class="input-group-prepend">
             <div class="input-group-text">
-                <select name="selectClase" class="form-control">
+                <select name="selectDepartamento" class="form-control">
                     @{
                         var first3 = Model.NewD.ElementAtOrDefault(0);
                         <option value="@first.Nombre">Departamento</option>
@@ -76,17 +73,17 @@
         </div>
     </div>
 
-    <button asp-action="" type="submit" class="btn btn-primary">Insertar</button>
+    <button asp-action="Modificar" type="submit" class="btn btn-primary">Insertar</button>
     <button asp-action="CancelarModificar" type="submit" class="btn btn-primary">Cerrar</button>
 
 
     <div class="form-group" style="display:none;">
-        <label asp-for="Codigo">@Model.Codigo</label>
-        <input asp-for="Codigo" class="form-control" />
+        <label asp-for="NombreAdmin">@Model.NombreAdmin</label>
+        <input asp-for="NombreAdmin" class="form-control" />
     </div>
     <div class="form-group" style="display:none;">
-        <label asp-for="UserName">@Model.UserName</label>
-        <input asp-for="UserName" class="form-control" />
+        <label asp-for="IdEmpleado">@Model.IdEmpleado</label>
+        <input asp-for="IdEmpleado" class="form-control" />
     </div>
 
 </form>

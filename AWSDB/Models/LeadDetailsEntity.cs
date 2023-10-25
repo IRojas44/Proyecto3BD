@@ -41,6 +41,7 @@ public class CombinedViewModel
 {
 	public IEnumerable<LeadDetailsEntity> LeadDetails { get; set; }
 
+    public NuevoEmpleado NuevoEmpleado { get; set; }
 	public Articulo NewArticulo { get; set; }
 
     public Empleado NewEmpleado { get; set; }
@@ -104,6 +105,27 @@ public class Empleado
     public string Puesto { get; set; }
 
 }
+
+public class NuevoEmpleado
+{
+    [Required]
+    public int id { get; set; }
+
+    [Required]
+    public string Nombre { get; set; }
+    [Required]
+    public string ValorIdentidad { get; set; }
+
+    [Required]
+    public string TipoIdentificacion { get; set; }
+
+    [Required]
+    public string Puesto { get; set; }
+
+    [Required]
+    public string Departamento { get; set; }
+}
+
 public class ArchivoViewModel
 {
 	public IFormFile Archivo { get; set; }

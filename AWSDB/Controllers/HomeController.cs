@@ -150,18 +150,24 @@ namespace AWSDB.Controllers
             return View();
         }
 
-        public IActionResult Create(string user)
+        public IActionResult Create(string userAdmin)
         {
-            //var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
             CombinedViewModel views = new CombinedViewModel();
-            //views.NewCA = getClaseArticulo;
-            views.UserName = user;
+            var getEmpleados = _db.Articulo.FromSqlRaw("ObtenerEmpleados").ToList();
+            var getTipoDocumento = _db.TipoDocumento.FromSqlRaw("ObtenerTipoDocumento").ToList(); //ObtenerTipoDocumento //ObtenerPuesto //ObtenerDepartamento
+            var getPuesto = _db.TipoPuesto.FromSqlRaw("ObtenerPuesto").ToList();
+            var getDepartamento = _db.TipoDepartamento.FromSqlRaw("ObtenerDepartamento").ToList();
+            views.NewTD = getTipoDocumento;
+            views.NewP = getPuesto;
+            views.NewD = getDepartamento;
+            views.LeadDetails = getEmpleados;
+            views.NombreAdmin = userAdmin;
             return View(views);
         }
 
         public IActionResult CreateV(CombinedViewModel model)
         {
-            return RedirectToAction("Create", "Home", new { user = model.UserName });
+            return RedirectToAction("Create", "Home", new { userAdmin = model.NombreAdmin});
         }
         public IActionResult CreateEmpleado()
         {
@@ -205,7 +211,7 @@ namespace AWSDB.Controllers
             return RedirectToAction("Index", "Home", new { user = model.UserName });
         }
 
-        public IActionResult Editar(string user, int IdEmpleado)
+        public IActionResult Editar(string userAdmin, int IdEmpleado)
         {
             
             CombinedViewModel views = new CombinedViewModel();
@@ -216,13 +222,13 @@ namespace AWSDB.Controllers
             views.NewP = getPuesto;
             views.NewD = getDepartamento;
             views.IdEmpleado = IdEmpleado;
-            views.UserName = user;
+            views.NombreAdmin = userAdmin;
             return View(views);
         }
 
         public IActionResult EditarV(int id ,CombinedViewModel model)
         {
-            return RedirectToAction("Editar", "Home", new { user = model.UserName, IdEmpleado = id});
+            return RedirectToAction("Editar", "Home", new { userAdmin = model.NombreAdmin, IdEmpleado = id});
         }
         public IActionResult EditarEmpleado()
         {
@@ -336,54 +342,96 @@ namespace AWSDB.Controllers
 
         public IActionResult Insertar(CombinedViewModel model)
         {
-            if (validarDatos(model.NewArticulo.Codigo, model.NewArticulo.Nombre, model.NewArticulo.Precio) == false)
+            /*if (validarDatos(model.NewArticulo.Codigo, model.NewArticulo.Nombre, model.NewArticulo.Precio) == false)
             {
                 TempData["Message"] = "Ingrese la informacion del articulo de forma correcta. Nombre: Solo puede contener letras, espacio y guiones. Precio: Solo puede contener numeros enteros o decimales";
                 return RedirectToAction("Create", "Home", new { user = model.UserName });
-            }
-            string nombre = model.NewArticulo.Nombre;
-            decimal precio = Convert.ToDecimal(model.NewArticulo.Precio);
-            string codigo = model.NewArticulo.Codigo;
-            string username = model.UserName;
-            string claseArticulo = Request.Form["selectClase"];
+            }*/
+            string nombre = model.NuevoEmpleado.Nombre;
+            string valorIdentificacion = model.NuevoEmpleado.ValorIdentidad;
+            string tipoId = Request.Form["selectTipoId"];
+            string puesto = Request.Form["selectPuesto"];
+            string departamanto = Request.Form["selectDepartamento"];
+            string username = model.NombreAdmin;
+          
 
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("AddArticulo", connection))
+                using (SqlCommand command = new SqlCommand("AddEmpleado", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-
-                    command.Parameters.AddWithValue("@inNombre", nombre);
-                    command.Parameters.AddWithValue("@inPrecio", precio);
-                    command.Parameters.AddWithValue("@inCodigo", codigo);
-                    command.Parameters.AddWithValue("@inClaseArticulo", claseArticulo);
                     command.Parameters.AddWithValue("@inUserName", username);
+                    command.Parameters.AddWithValue("@inNombre", nombre);
+                    command.Parameters.AddWithValue("@inTipoDocuIdentidad", tipoId);
+                    command.Parameters.AddWithValue("@inValorTipoDocumento", valorIdentificacion);
+                    command.Parameters.AddWithValue("@inPuesto", puesto);
+                    command.Parameters.AddWithValue("@inDepartamento", departamanto);
+                   
                     command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
 
                     command.ExecuteNonQuery();
 
                     int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
                     connection.Close();
+            
                     if (resultCode == 50002)
                     {
-                        TempData["Message"] = "Articulo con nombre duplicado";
-                        return RedirectToAction("Create", "Home", new { user = username });
+                        TempData["Message"] = "Valor del Documento Duplicado";
+                        return RedirectToAction("Create", "Home", new { userAdmin = username });
                     }
-                    else if (resultCode == 50003)
-                    {
-                        TempData["Message"] = "Articulo con codigo duplicado";
-                        return RedirectToAction("Create", "Home", new { user = username });
-                    }
-                    else
-                    {
-                        TempData["Message"] = "Insercion exitosa";
-                        return RedirectToAction("Index", "Home", new { user = username });
-                    }
+                    return RedirectToAction("Index", "Home", new { userAdmin = username, userEmpleado = "" });
                 }
             }
         }
+
+        public IActionResult Modificar(CombinedViewModel model)
+        {
+            /*if (validarDatos(model.NewArticulo.Codigo, model.NewArticulo.Nombre, model.NewArticulo.Precio) == false)
+            {
+                TempData["Message"] = "Ingrese la informacion del articulo de forma correcta. Nombre: Solo puede contener letras, espacio y guiones. Precio: Solo puede contener numeros enteros o decimales";
+                return RedirectToAction("Create", "Home", new { user = model.UserName });
+            }*/
+            string nombre = model.NuevoEmpleado.Nombre;
+            string valorIdentificacion = model.NuevoEmpleado.ValorIdentidad;
+            string tipoId = Request.Form["selectTipoId"];
+            string puesto = Request.Form["selectPuesto"];
+            string departamanto = Request.Form["selectDepartamento"];
+            string username = model.NombreAdmin;
+            int IdEmpleado = Convert.ToInt32(model.IdEmpleado);
+
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("ModificarEmpleado", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@inUserName", username);
+                    command.Parameters.AddWithValue("@inNombre", nombre);
+                    command.Parameters.AddWithValue("@inTipoDocuIdentidad", tipoId);
+                    command.Parameters.AddWithValue("@inValorTipoDocumentoNuevo", valorIdentificacion);
+                    command.Parameters.AddWithValue("@inPuesto", puesto);
+                    command.Parameters.AddWithValue("@inDepartamento", departamanto);
+                    command.Parameters.AddWithValue("@IdEmpleado", IdEmpleado);
+                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
+
+                    command.ExecuteNonQuery();
+
+                    int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
+                    connection.Close();
+                    
+                    if (resultCode == 50002)
+                    {
+                        TempData["Message"] = "Valor del Documento Duplicado";
+                        return RedirectToAction("Editar", "Home", new { userAdmin = username, IdEmpleado = IdEmpleado });
+                    }
+                    return RedirectToAction("Index", "Home", new { userAdmin = username, userEmpleado = "" });
+                }
+            }
+        }
+
         public bool validarDatos(string codigo, string nombre, string precio)
         {
             if (nombre == null || precio == null || codigo == null) { return false; }
