@@ -177,38 +177,7 @@ namespace AWSDB.Controllers
         public IActionResult VolverCreate(CombinedViewModel model)
         {
 
-            return RedirectToAction("Index", "Home", new { user = model.UserName });
-        }
-        public IActionResult ModifyValidation(string user)
-        {
-            CombinedViewModel views = new CombinedViewModel();
-            views.UserName = user;
-            return View(views);
-        }
-
-        public IActionResult ModifyV(CombinedViewModel model)
-        {
-            return RedirectToAction("ModifyValidation", "Home", new { user = model.UserName });
-        }
-
-        public IActionResult Modify(string user, string code)
-        {
-            //var getClaseArticulo = _db.ClaseArticulo.FromSqlRaw("ObtenerNombreClase").ToList();
-            CombinedViewModel views = new CombinedViewModel();
-            //views.NewCA = getClaseArticulo;
-            views.Codigo = code;
-            views.UserName = user;
-            return View(views);
-        }
-        public IActionResult ModifyArticle()
-        {
-            return RedirectToAction("Modify", "Home");
-        }
-
-        public IActionResult VolverModify(CombinedViewModel model)
-        {
-
-            return RedirectToAction("Index", "Home", new { user = model.UserName });
+            return RedirectToAction("Index", "Home", new { userAdmin = model.NombreAdmin, userEmpleado = "" });
         }
 
         public IActionResult Editar(string userAdmin, int IdEmpleado)
@@ -235,48 +204,42 @@ namespace AWSDB.Controllers
             return RedirectToAction("EditarV", "Home");
         }
 
-        public IActionResult Erase(string user, string code)
+        public IActionResult Erase(CombinedViewModel model)
         {
+            string nombreAdmin = model.NombreAdmin;
+            int IdEmpleado = Convert.ToInt32(model.IdEmpleado);
+
+
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("ObtenerArticuloCodigo", connection))
+                using (SqlCommand command = new SqlCommand("BorrarEmpleado", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-
-                    command.Parameters.AddWithValue("@inCodigo", code);
-                    command.Parameters.AddWithValue("@inUserName", user);
+                    command.Parameters.AddWithValue("@inUserName", nombreAdmin);
+                    command.Parameters.AddWithValue("@inIdEmpleado", IdEmpleado);
                     command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
-                    using (SqlDataReader reader = command.ExecuteReader())
+
+                    command.ExecuteNonQuery();
+
+                    int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
+                    connection.Close();
+
+                    if (resultCode == 50001 || resultCode == 50005)
                     {
-                        Articulo resultArticulo = new Articulo();
-                        while (reader.Read())
-                        {
-                            resultArticulo.Codigo = reader["Codigo"].ToString();
-                            resultArticulo.Nombre = reader["Nombre"].ToString();
-                            resultArticulo.ClaseArticulo = reader["ClaseArticulo"].ToString();
-                            resultArticulo.Precio = reader["Precio"].ToString();
-
-                        }
-
-                        int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
-                        connection.Close();
-
-                        CombinedViewModel views = new CombinedViewModel();
-                        views.NewArticulo = resultArticulo;
-                        views.Codigo = code;
-                        views.UserName = user;
-                        return View(views);
+                        TempData["Message"] = "Error en el borrado";
+                        return RedirectToAction("Editar", "Home", new { userAdmin = nombreAdmin, IdEmpleado = IdEmpleado });
                     }
+                    return RedirectToAction("Index", "Home", new { userAdmin = nombreAdmin, userEmpleado = "" });
                 }
             }
 
         }
 
-        public IActionResult VolverErase(CombinedViewModel model)
+        public IActionResult CancelarModificar(CombinedViewModel model)
         {
 
-            return RedirectToAction("Index", "Home", new { user = model.UserName });
+            return RedirectToAction("Index", "Home", new { userAdmin = model.NombreAdmin, userEmpleado = "" });
         }
         public IActionResult Upload()
         {
@@ -289,14 +252,6 @@ namespace AWSDB.Controllers
 
         public IActionResult Ingresar(CombinedViewModel model)
         {
-            /*
-			if (validarDatos(usuario.Nombre, usuario.Precio) == false)
-			{
-				TempData["Message"] = "Ingrese la informacion del articulo de forma correcta. Nombre: Solo puede contener letras, espacio y guiones. Precio: Solo puede contener numeros enteros o decimales";
-				return RedirectToAction("Login", "Home");
-			}
-			*/
-            //----------CORREGIR----------
             string Username = model.NombreAdmin;
             string password = model.PasswordAdmin;
 
@@ -342,11 +297,6 @@ namespace AWSDB.Controllers
 
         public IActionResult Insertar(CombinedViewModel model)
         {
-            /*if (validarDatos(model.NewArticulo.Codigo, model.NewArticulo.Nombre, model.NewArticulo.Precio) == false)
-            {
-                TempData["Message"] = "Ingrese la informacion del articulo de forma correcta. Nombre: Solo puede contener letras, espacio y guiones. Precio: Solo puede contener numeros enteros o decimales";
-                return RedirectToAction("Create", "Home", new { user = model.UserName });
-            }*/
             string nombre = model.NuevoEmpleado.Nombre;
             string valorIdentificacion = model.NuevoEmpleado.ValorIdentidad;
             string tipoId = Request.Form["selectTipoId"];
@@ -388,11 +338,6 @@ namespace AWSDB.Controllers
 
         public IActionResult Modificar(CombinedViewModel model)
         {
-            /*if (validarDatos(model.NewArticulo.Codigo, model.NewArticulo.Nombre, model.NewArticulo.Precio) == false)
-            {
-                TempData["Message"] = "Ingrese la informacion del articulo de forma correcta. Nombre: Solo puede contener letras, espacio y guiones. Precio: Solo puede contener numeros enteros o decimales";
-                return RedirectToAction("Create", "Home", new { user = model.UserName });
-            }*/
             string nombre = model.NuevoEmpleado.Nombre;
             string valorIdentificacion = model.NuevoEmpleado.ValorIdentidad;
             string tipoId = Request.Form["selectTipoId"];
@@ -552,5 +497,6 @@ namespace AWSDB.Controllers
             return RedirectToAction("IndexEmpleado", "Home", new { userAdmin = UsernameAdmin, userEmpleado = UsernameEmpleado, mostrarBoton=true});
         }
 
-    }    
+        //---------------------------------------------------FUNCIONES EMPLEADO---------------------------------------------------
+    }
 }

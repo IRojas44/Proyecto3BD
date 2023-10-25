@@ -4,7 +4,7 @@
 <h2>Editar Empleado</h2>
 
 <form  asp-action="Editar" method="post">
-    <button asp-action="" type="submit" class="btn btn-primary">Eliminar Empleado/a</button>
+    <button asp-action="Erase" asp-route-Id="@Model.IdEmpleado" type="submit" class="btn btn-primary">Eliminar Empleado/a</button>
     <button asp-action="prueba" type="submit" class="btn btn-primary">Impersonar Empleado/a</button>
 
     <div class="form-group">
