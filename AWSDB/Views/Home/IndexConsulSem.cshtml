@@ -1,5 +1,5 @@
 ﻿@model CombinedViewModel
-<form asp-controller="IndexEmpleado" method="post">
+<form asp-controller="IndexConsulSem" method="post">
     <div>
         <label class="Titulo-IndexU">Bienvenido/a empleado</label>
     </div>
@@ -12,16 +12,20 @@
                         <th>Salario Bruto</th>
                         <th>Total Deducciones</th>
                         <th>Salario Neto</th>
+                        <th>Horas Ordinarios</th>
+                        <th>Horas Extras</th>
+                        <th>Horas Dobles</th>
                     </tr>
                 </thead>
-                <tbody >
+                <tbody>
                     @*@foreach (var item in Model.LeadDetails)
                     {
                         <tr>
-                        <td>@item.Codigo</td>
-                        <td>@item.Nombre</td>
-                        <td>@item.ClaseArticulo</td>
-                        <td><button asp-action="EditarV" asp-route-Id="@item.id" type="submit" class="btn btn-primary">Editar este empleado/a</button></td>
+                            <td>@item.Codigo</td>
+                            <td>@item.Nombre</td>
+                            <td>@item.ClaseArticulo</td>
+                            <td><button asp-action="SemDeduccionesV" asp-route-Id="@item.id" type="submit" class="btn btn-primary">Consultar Deducciones</button></td>
+                            <td><button asp-action="SemBrutoV" asp-route-Id="@item.id" type="submit" class="btn btn-primary">Consultar Salario</button></td>
                         </tr>
                     }*@
                 </tbody>

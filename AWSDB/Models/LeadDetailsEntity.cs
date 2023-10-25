@@ -35,12 +35,91 @@ namespace AWSDB.Models
         public int id { get; set; }
         public string Nombre { get; set; }
     }
+
+    public class PlanillaSemanal
+    {
+        [Key]
+        public int id { get; set; }
+        public int salarioBruto { get; set; }
+
+        public int totalDeducciones { get; set; }
+
+        public int salarioNeto { get; set; }
+
+        public int Horas { get; set; }
+
+        public int HorasExtras { get; set; }
+
+        public int HorasDobles { get; set; }
+    }
+    public class SemanalDeducciones
+    {
+        [Key]
+        public int id { get; set; }
+
+        public string nombre { get; set; }
+
+        public int porcentaje { get; set; }
+
+        public int monto { get; set; }
+    }
+    public class SemanalBruto
+    {
+        [Key]
+        public int id { get; set; }
+
+        public string diaSemana { get; set; }
+
+        public string horaEntrada { get; set; }
+
+        public string horaSalida { get; set; }
+
+        public int horas { get; set; }
+
+        public int montoHoras { get; set; }
+
+        public int horasExtras { get; set; }
+
+        public int montoExtras { get; set; }
+
+        public int horasDobles { get; set; }
+
+        public int montoDobles { get; set; }
+    }
+
+    public class PlanillaMensual
+    {
+        [Key]
+        public int id { get; set; }
+        public int salarioBruto { get; set; }
+
+        public int totalDeducciones { get; set; }
+
+        public int salarioNeto { get; set; }
+    }
+
+    public class MensualDeducciones
+    {
+        [Key]
+        public int id { get; set; }
+
+        public string nombre { get; set; }
+
+        public int porcentaje { get; set; }
+
+        public int monto { get; set; }
+    }
 }
 
 public class CombinedViewModel
 {
 	public IEnumerable<LeadDetailsEntity> LeadDetails { get; set; }
 
+    public IEnumerable<PlanillaSemanal> PlanillaSemanal { get; set; }
+    public IEnumerable<SemanalBruto> SemanalBruto { get; set; }
+    public IEnumerable<SemanalDeducciones> semanalDeducciones { get; set; }
+    public IEnumerable<PlanillaMensual> PlanillaMensual { get; set; }
+    public IEnumerable<MensualDeducciones> mensualDeducciones { get; set; }
     public NuevoEmpleado NuevoEmpleado { get; set; }
 	public Articulo NewArticulo { get; set; }
 

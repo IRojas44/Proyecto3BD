@@ -516,5 +516,100 @@ namespace AWSDB.Controllers
         }
 
         //---------------------------------------------------FUNCIONES EMPLEADO---------------------------------------------------
+        public IActionResult IndexConsulSem(string userAdmin, string userEmpleado)
+        {
+            CombinedViewModel views = new CombinedViewModel();
+
+            //var getEmpleados = _db.Articulo.FromSqlRaw("ObtenerEmpleados").ToList();
+            //var getTipoDocumento = _db.TipoDocumento.FromSqlRaw("ObtenerTipoDocumento").ToList(); //ObtenerTipoDocumento //ObtenerPuesto //ObtenerDepartamento
+            //var getPuesto = _db.TipoPuesto.FromSqlRaw("ObtenerPuesto").ToList();
+            //var getDepartamento = _db.TipoDepartamento.FromSqlRaw("ObtenerDepartamento").ToList();
+            //views.NewTD = getTipoDocumento;
+            //views.NewP = getPuesto;
+            //views.NewD = getDepartamento;
+            //views.LeadDetails = getEmpleados;
+            views.NombreAdmin = userAdmin;
+            views.NombreEmpleado = userEmpleado;
+            return View(views);
+        }
+
+        public IActionResult IndexConsulMensual(string userAdmin, string userEmpleado)
+        {
+            CombinedViewModel views = new CombinedViewModel();
+
+            //var getEmpleados = _db.Articulo.FromSqlRaw("ObtenerEmpleados").ToList();
+            //var getTipoDocumento = _db.TipoDocumento.FromSqlRaw("ObtenerTipoDocumento").ToList(); //ObtenerTipoDocumento //ObtenerPuesto //ObtenerDepartamento
+            //var getPuesto = _db.TipoPuesto.FromSqlRaw("ObtenerPuesto").ToList();
+            //var getDepartamento = _db.TipoDepartamento.FromSqlRaw("ObtenerDepartamento").ToList();
+            //views.NewTD = getTipoDocumento;
+            //views.NewP = getPuesto;
+            //views.NewD = getDepartamento;
+            //views.LeadDetails = getEmpleados;
+            views.NombreAdmin = userAdmin;
+            views.NombreEmpleado = userEmpleado;
+            return View(views);
+        }
+
+        public IActionResult SemanalBruto(string userAdmin, string userEmpleado)
+        {
+            CombinedViewModel views = new CombinedViewModel();
+
+            //var getEmpleados = _db.Articulo.FromSqlRaw("ObtenerEmpleados").ToList();
+            //var getTipoDocumento = _db.TipoDocumento.FromSqlRaw("ObtenerTipoDocumento").ToList(); //ObtenerTipoDocumento //ObtenerPuesto //ObtenerDepartamento
+            //var getPuesto = _db.TipoPuesto.FromSqlRaw("ObtenerPuesto").ToList();
+            //var getDepartamento = _db.TipoDepartamento.FromSqlRaw("ObtenerDepartamento").ToList();
+            //views.NewTD = getTipoDocumento;
+            //views.NewP = getPuesto;
+            //views.NewD = getDepartamento;
+            //views.LeadDetails = getEmpleados;
+            views.NombreAdmin = userAdmin;
+            views.NombreEmpleado = userEmpleado;
+            return View(views);
+        }
+        public IActionResult SemBrutoV(CombinedViewModel model)
+        {
+            return RedirectToAction("SemanalBruto", "Home", new { userAdmin = model.NombreAdmin });
+        }
+        public IActionResult SemanalDeducciones(string userAdmin, string userEmpleado)
+        {
+            CombinedViewModel views = new CombinedViewModel();
+
+            //var getEmpleados = _db.Articulo.FromSqlRaw("ObtenerEmpleados").ToList();
+            //var getTipoDocumento = _db.TipoDocumento.FromSqlRaw("ObtenerTipoDocumento").ToList(); //ObtenerTipoDocumento //ObtenerPuesto //ObtenerDepartamento
+            //var getPuesto = _db.TipoPuesto.FromSqlRaw("ObtenerPuesto").ToList();
+            //var getDepartamento = _db.TipoDepartamento.FromSqlRaw("ObtenerDepartamento").ToList();
+            //views.NewTD = getTipoDocumento;
+            //views.NewP = getPuesto;
+            //views.NewD = getDepartamento;
+            //views.LeadDetails = getEmpleados;
+            views.NombreAdmin = userAdmin;
+            views.NombreEmpleado = userEmpleado;
+            return View(views);
+        }
+        public IActionResult SemDeduccionesV(CombinedViewModel model)
+        {
+            return RedirectToAction("SemanalDeducciones", "Home", new { userAdmin = model.NombreAdmin });
+        }
+
+        public IActionResult MensualDeducciones(string userAdmin, string userEmpleado)
+        {
+            CombinedViewModel views = new CombinedViewModel();
+
+            //var getEmpleados = _db.Articulo.FromSqlRaw("ObtenerEmpleados").ToList();
+            //var getTipoDocumento = _db.TipoDocumento.FromSqlRaw("ObtenerTipoDocumento").ToList(); //ObtenerTipoDocumento //ObtenerPuesto //ObtenerDepartamento
+            //var getPuesto = _db.TipoPuesto.FromSqlRaw("ObtenerPuesto").ToList();
+            //var getDepartamento = _db.TipoDepartamento.FromSqlRaw("ObtenerDepartamento").ToList();
+            //views.NewTD = getTipoDocumento;
+            //views.NewP = getPuesto;
+            //views.NewD = getDepartamento;
+            //views.LeadDetails = getEmpleados;
+            views.NombreAdmin = userAdmin;
+            views.NombreEmpleado = userEmpleado;
+            return View(views);
+        }
+        public IActionResult MensualDeduccionesV(CombinedViewModel model)
+        {
+            return RedirectToAction("MensualDeducciones", "Home", new { userAdmin = model.NombreAdmin });
+        }
     }
 }
