@@ -516,100 +516,238 @@ namespace AWSDB.Controllers
         }
 
         //---------------------------------------------------FUNCIONES EMPLEADO---------------------------------------------------
-        public IActionResult IndexConsulSem(string userAdmin, string userEmpleado)
-        {
-            CombinedViewModel views = new CombinedViewModel();
+       
 
-            //var getEmpleados = _db.Articulo.FromSqlRaw("ObtenerEmpleados").ToList();
-            //var getTipoDocumento = _db.TipoDocumento.FromSqlRaw("ObtenerTipoDocumento").ToList(); //ObtenerTipoDocumento //ObtenerPuesto //ObtenerDepartamento
-            //var getPuesto = _db.TipoPuesto.FromSqlRaw("ObtenerPuesto").ToList();
-            //var getDepartamento = _db.TipoDepartamento.FromSqlRaw("ObtenerDepartamento").ToList();
-            //views.NewTD = getTipoDocumento;
-            //views.NewP = getPuesto;
-            //views.NewD = getDepartamento;
-            //views.LeadDetails = getEmpleados;
-            views.NombreAdmin = userAdmin;
-            views.NombreEmpleado = userEmpleado;
-            return View(views);
+        public IActionResult IndexConsulMensual(string userEmpleado)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("ObtenerPlanillaMensual", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@inUserName", userEmpleado);
+                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        List<PlanillaMensual> ConsulMensual = new List<PlanillaMensual>();
+                        while (reader.Read())
+                        {
+                            PlanillaMensual result = new PlanillaMensual();
+                            result.id = Convert.ToInt32(reader["id"]);
+                            result.salarioBruto = Convert.ToInt32(reader["salarioTotal"]);
+                            result.totalDeducciones = Convert.ToInt32(reader["totalDeducciones"]);
+                            result.salarioNeto = Convert.ToInt32(reader["salarioNeto"]);
+
+                            ConsulMensual.Add(result);
+                        }
+
+                        int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
+                        connection.Close();
+
+
+                        CombinedViewModel views = new CombinedViewModel();
+                        views.PlanillaMensual = ConsulMensual;
+                        views.NombreAdmin = "";
+                        views.NombreEmpleado = userEmpleado;
+                        return View(views);
+                    }
+                }
+            }
         }
 
-        public IActionResult IndexConsulMensual(string userAdmin, string userEmpleado)
+        public IActionResult IndexConsulMensualV(CombinedViewModel model)
         {
-            CombinedViewModel views = new CombinedViewModel();
-
-            //var getEmpleados = _db.Articulo.FromSqlRaw("ObtenerEmpleados").ToList();
-            //var getTipoDocumento = _db.TipoDocumento.FromSqlRaw("ObtenerTipoDocumento").ToList(); //ObtenerTipoDocumento //ObtenerPuesto //ObtenerDepartamento
-            //var getPuesto = _db.TipoPuesto.FromSqlRaw("ObtenerPuesto").ToList();
-            //var getDepartamento = _db.TipoDepartamento.FromSqlRaw("ObtenerDepartamento").ToList();
-            //views.NewTD = getTipoDocumento;
-            //views.NewP = getPuesto;
-            //views.NewD = getDepartamento;
-            //views.LeadDetails = getEmpleados;
-            views.NombreAdmin = userAdmin;
-            views.NombreEmpleado = userEmpleado;
-            return View(views);
+            if (model.NombreEmpleado == null)
+            {
+                return RedirectToAction("IndexEmpleado", "Home", new { userAdmin = model.NombreAdmin, userEmpleado = model.NombreEmpleado });
+            }
+            return RedirectToAction("IndexConsulMensual", "Home", new { userEmpleado = model.NombreEmpleado });
         }
 
-        public IActionResult SemanalBruto(string userAdmin, string userEmpleado)
+        public IActionResult MensualDeducciones(string userEmpleado, int idPlanilla)
         {
-            CombinedViewModel views = new CombinedViewModel();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("ObtenerPlanillaMensual", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@inUserName", userEmpleado);
+                    command.Parameters.AddWithValue("@inIdPlanillaMensual", idPlanilla);
+                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        List<MensualDeducciones> DeduccionesMensual = new List<MensualDeducciones>();
+                        while (reader.Read())
+                        {
+                            MensualDeducciones result = new MensualDeducciones();
+                            result.id = Convert.ToInt32(reader["id"]);
+                            result.nombre = reader["Nombre"].ToString();
+                            result.porcentaje = Convert.ToInt32(reader["Porcentaje"]);
+                            result.monto = Convert.ToInt32(reader["Monto"]);
 
-            //var getEmpleados = _db.Articulo.FromSqlRaw("ObtenerEmpleados").ToList();
-            //var getTipoDocumento = _db.TipoDocumento.FromSqlRaw("ObtenerTipoDocumento").ToList(); //ObtenerTipoDocumento //ObtenerPuesto //ObtenerDepartamento
-            //var getPuesto = _db.TipoPuesto.FromSqlRaw("ObtenerPuesto").ToList();
-            //var getDepartamento = _db.TipoDepartamento.FromSqlRaw("ObtenerDepartamento").ToList();
-            //views.NewTD = getTipoDocumento;
-            //views.NewP = getPuesto;
-            //views.NewD = getDepartamento;
-            //views.LeadDetails = getEmpleados;
-            views.NombreAdmin = userAdmin;
-            views.NombreEmpleado = userEmpleado;
-            return View(views);
-        }
-        public IActionResult SemBrutoV(CombinedViewModel model)
-        {
-            return RedirectToAction("SemanalBruto", "Home", new { userAdmin = model.NombreAdmin });
-        }
-        public IActionResult SemanalDeducciones(string userAdmin, string userEmpleado)
-        {
-            CombinedViewModel views = new CombinedViewModel();
+                            DeduccionesMensual.Add(result);
+                        }
 
-            //var getEmpleados = _db.Articulo.FromSqlRaw("ObtenerEmpleados").ToList();
-            //var getTipoDocumento = _db.TipoDocumento.FromSqlRaw("ObtenerTipoDocumento").ToList(); //ObtenerTipoDocumento //ObtenerPuesto //ObtenerDepartamento
-            //var getPuesto = _db.TipoPuesto.FromSqlRaw("ObtenerPuesto").ToList();
-            //var getDepartamento = _db.TipoDepartamento.FromSqlRaw("ObtenerDepartamento").ToList();
-            //views.NewTD = getTipoDocumento;
-            //views.NewP = getPuesto;
-            //views.NewD = getDepartamento;
-            //views.LeadDetails = getEmpleados;
-            views.NombreAdmin = userAdmin;
-            views.NombreEmpleado = userEmpleado;
-            return View(views);
+                        int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
+                        connection.Close();
+
+
+                        CombinedViewModel views = new CombinedViewModel();
+                        views.mensualDeducciones = DeduccionesMensual;
+                        views.NombreAdmin = "";
+                        views.NombreEmpleado = userEmpleado;
+                        return View(views);
+                    }
+                }
+            }
         }
-        public IActionResult SemDeduccionesV(CombinedViewModel model)
+        public IActionResult MensualDeduccionesV(int id, CombinedViewModel model)
         {
-            return RedirectToAction("SemanalDeducciones", "Home", new { userAdmin = model.NombreAdmin });
+            return RedirectToAction("MensualDeducciones", "Home", new { userEmpleado = model.NombreEmpleado, idPlanilla = id });
         }
 
-        public IActionResult MensualDeducciones(string userAdmin, string userEmpleado)
+        public IActionResult IndexConsulSem(string userEmpleado)
         {
-            CombinedViewModel views = new CombinedViewModel();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("ObtenerPlanillaMensual", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@inUserName", userEmpleado);
+                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        List<PlanillaSemanal> ConsulSemanal = new List<PlanillaSemanal>();
+                        while (reader.Read())
+                        {
+                            PlanillaSemanal result = new PlanillaSemanal();
+                            result.id = Convert.ToInt32(reader["id"]);
+                            result.salarioBruto = Convert.ToInt32(reader["salarioBruto"]);
+                            result.totalDeducciones = Convert.ToInt32(reader["totalDeducciones"]);
+                            result.salarioNeto = Convert.ToInt32(reader["salarioNeto"]);
+                            result.Horas = Convert.ToInt32(reader["Horas"]);
+                            result.HorasExtras = Convert.ToInt32(reader["HorasExtras"]);
+                            result.HorasDobles = Convert.ToInt32(reader["HorasDobles"]);
 
-            //var getEmpleados = _db.Articulo.FromSqlRaw("ObtenerEmpleados").ToList();
-            //var getTipoDocumento = _db.TipoDocumento.FromSqlRaw("ObtenerTipoDocumento").ToList(); //ObtenerTipoDocumento //ObtenerPuesto //ObtenerDepartamento
-            //var getPuesto = _db.TipoPuesto.FromSqlRaw("ObtenerPuesto").ToList();
-            //var getDepartamento = _db.TipoDepartamento.FromSqlRaw("ObtenerDepartamento").ToList();
-            //views.NewTD = getTipoDocumento;
-            //views.NewP = getPuesto;
-            //views.NewD = getDepartamento;
-            //views.LeadDetails = getEmpleados;
-            views.NombreAdmin = userAdmin;
-            views.NombreEmpleado = userEmpleado;
-            return View(views);
+                            ConsulSemanal.Add(result);
+                        }
+
+                        int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
+                        connection.Close();
+
+
+                        CombinedViewModel views = new CombinedViewModel();
+                        views.PlanillaSemanal = ConsulSemanal;
+                        views.NombreAdmin = "";
+                        views.NombreEmpleado = userEmpleado;
+                        return View(views);
+                    }
+                }
+            }
         }
-        public IActionResult MensualDeduccionesV(CombinedViewModel model)
+
+        public IActionResult IndexConsulSemV(CombinedViewModel model)
         {
-            return RedirectToAction("MensualDeducciones", "Home", new { userAdmin = model.NombreAdmin });
+            if (model.NombreEmpleado == null)
+            {
+                return RedirectToAction("IndexEmpleado", "Home", new { userAdmin = model.NombreAdmin, userEmpleado = model.NombreEmpleado });
+            }
+            return RedirectToAction("IndexConsulSem", "Home", new { userEmpleado = model.NombreEmpleado });
+        }
+
+        public IActionResult SemanalBruto(string userEmpleado, int idPlanilla)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("ObtenerSalarioBrutoSemanal", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@inUserName", userEmpleado);
+                    command.Parameters.AddWithValue("@inIdPlanillaSemanal", idPlanilla);
+                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        List<SemanalBruto> semanalBruto = new List<SemanalBruto>();
+                        while (reader.Read())
+                        {
+                            SemanalBruto result = new SemanalBruto();
+                            result.id = Convert.ToInt32(reader["id"]);
+                            result.diaSemana = reader["diaSemana"].ToString();
+                            result.horaEntrada = reader["horaEntrada"].ToString();
+                            result.horaSalida = reader["horaSalida"].ToString();
+                            result.horas = Convert.ToInt32(reader["horas"]);
+                            result.montoHoras = Convert.ToInt32(reader["montoHoras"]);
+                            result.horasExtras = Convert.ToInt32(reader["horasExtras"]);
+                            result.montoExtras = Convert.ToInt32(reader["montoExtras"]);
+                            result.horasDobles = Convert.ToInt32(reader["horasDobles"]);
+                            result.montoDobles = Convert.ToInt32(reader["montoDobles"]);
+
+                            semanalBruto.Add(result);
+                        }
+
+                        int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
+                        connection.Close();
+
+
+                        CombinedViewModel views = new CombinedViewModel();
+                        views.SemanalBruto = semanalBruto;
+                        views.NombreAdmin = "";
+                        views.NombreEmpleado = userEmpleado;
+                        return View(views);
+                    }
+                }
+            }
+        }
+        public IActionResult SemDeduccionesV(int id, CombinedViewModel model)
+        {
+            return RedirectToAction("SemanalBruto", "Home", new { userEmpleado = model.NombreEmpleado, idPlanilla = id });
+        }
+
+        public IActionResult SemanalDeducciones(string userEmpleado, int idPlanilla)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("ObtenerDeduccionSemanal", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@inUserName", userEmpleado);
+                    command.Parameters.AddWithValue("@inIdPlanillaMensual", idPlanilla);
+                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        List<SemanalDeducciones> DeduccionesSemanal = new List<SemanalDeducciones>();
+                        while (reader.Read())
+                        {
+                            SemanalDeducciones result = new SemanalDeducciones();
+                            result.id = Convert.ToInt32(reader["id"]);
+                            result.nombre = reader["Nombre"].ToString();
+                            result.porcentaje = Convert.ToInt32(reader["Porcentaje"]);
+                            result.monto = Convert.ToInt32(reader["Monto"]);
+
+                            DeduccionesSemanal.Add(result);
+                        }
+
+                        int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
+                        connection.Close();
+
+
+                        CombinedViewModel views = new CombinedViewModel();
+                        views.semanalDeducciones = DeduccionesSemanal;
+                        views.NombreAdmin = "";
+                        views.NombreEmpleado = userEmpleado;
+                        return View(views);
+                    }
+                }
+            }
+        }
+        public IActionResult SemBrutoV(int id, CombinedViewModel model)
+        {
+            return RedirectToAction("SemanalDeducciones", "Home", new { userEmpleado = model.NombreEmpleado, idPlanilla = id });
         }
     }
 }

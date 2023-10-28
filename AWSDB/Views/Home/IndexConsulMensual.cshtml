@@ -15,15 +15,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @*@foreach (var item in Model.LeadDetails)
+                    @foreach (var item in Model.PlanillaMensual)
                     {
                     <tr>
-                    <td>@item.Codigo</td>
-                    <td>@item.Nombre</td>
-                    <td>@item.ClaseArticulo</td>
+                    <td>@item.salarioBruto</td>
+                    <td>@item.totalDeducciones</td>
+                    <td>@item.salarioNeto</td>
                     <td><button asp-action="MensualDeduccionesV" asp-route-Id="@item.id" type="submit" class="btn btn-primary">Consultar Deducciones</button></td>
                     </tr>
-                    }*@
+                    }
                 </tbody>
                 <tbody>
 
@@ -42,8 +42,8 @@
         </div>
     </div>
     <div class="form-group" style="display:none;">
-        <label asp-for="UserName">@Model.UserName</label>
-        <input asp-for="UserName" class="form-control" />
+        <label asp-for="NombreEmpleado">@Model.NombreEmpleado</label>
+        <input asp-for="NombreEmpleado" class="form-control" />
     </div>
 </form>
 @if (TempData["Message"] != null) 

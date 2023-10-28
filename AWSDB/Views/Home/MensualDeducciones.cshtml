@@ -15,15 +15,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @*@foreach (var item in Model.LeadDetails)
+                    @foreach (var item in Model.mensualDeducciones)
                     {
                         <tr>
-                            <td>@item.Codigo</td>
-                            <td>@item.Nombre</td>
-                            <td>@item.ClaseArticulo</td>
+                            <td>@item.nombre</td>
+                            <td>@item.porcentaje</td>
+                            <td>@item.monto</td>
                            
                         </tr>
-                    }*@
+                    }
                 </tbody>
                 <tbody>
 
@@ -36,8 +36,8 @@
 		</div>
 	</div>
     <div class="form-group" style="display:none;">
-        <label asp-for="UserName">@Model.UserName</label>
-        <input asp-for="UserName" class="form-control" />
+        <label asp-for="NombreEmpleado">@Model.NombreEmpleado</label>
+        <input asp-for="NombreEmpleado" class="form-control" />
     </div>
 </form>
 @if (TempData["Message"] != null) 
