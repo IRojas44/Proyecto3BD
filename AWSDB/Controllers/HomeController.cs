@@ -112,7 +112,10 @@ namespace AWSDB.Controllers
             }
             return RedirectToAction("IndexNombre", "Home", new { user = model.NombreAdmin, nombre = model.NewEmpleado.Nombre});
         }
-
+        public IActionResult VolverLog()
+        {
+            return RedirectToAction("Login", "Home");
+        }
         public IActionResult Volver()
         {
             return RedirectToAction("Index", "Home");
@@ -474,12 +477,12 @@ namespace AWSDB.Controllers
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
-                        using (SqlCommand command = new SqlCommand("ProcesarXml", connection))
+                        using (SqlCommand command = new SqlCommand("ProcesarXmlSimular", connection))
                         {
                             command.CommandType = CommandType.StoredProcedure;
 
                             // Pasa el contenido XML como parámetro
-                            command.Parameters.AddWithValue("@Datos", xmlContent);
+                            command.Parameters.AddWithValue("@inDatos", xmlContent);
 
                             // Configura el parámetro de salida para capturar la contraseña
                             command.Parameters.Add("@outResult", SqlDbType.VarChar, 128).Direction = ParameterDirection.Output;
@@ -487,7 +490,7 @@ namespace AWSDB.Controllers
                             command.ExecuteNonQuery();
 
                             // Obtener la contraseña del parámetro de salida
-                            string password = Convert.ToString(command.Parameters["@outResult"].Value);
+                            string ERROR = Convert.ToString(command.Parameters["@outResult"].Value);
 
                             // Realiza acciones adicionales si es necesario
                             connection.Close();
