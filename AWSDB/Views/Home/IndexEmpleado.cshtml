@@ -1,7 +1,7 @@
 ﻿@model CombinedViewModel
 <form asp-controller="IndexEmpleado" method="post">
     <div>
-        <label class="Titulo-IndexU">Bienvenido/a empleado</label>
+        <label class="Titulo-IndexU">Bienvenido/a empleado: @Model.NombreEmpleado</label>
     </div>
    
     <div class="row">
@@ -44,6 +44,10 @@
     <div class="form-group" style="display:none;">
         <label asp-for="NombreEmpleado">@Model.NombreEmpleado</label>
         <input asp-for="NombreEmpleado" class="form-control" />
+    </div>
+    <div class="form-group" style="display:none;">
+        <label asp-for="NombreAdmin">@Model.NombreAdmin</label>
+        <input asp-for="NombreAdmin" class="form-control" />
     </div>
 </form>
 @if (TempData["Message"] != null) 

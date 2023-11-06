@@ -56,7 +56,7 @@ namespace AWSDB.Controllers
             return View(views);
         }
 
-        public IActionResult IndexEmpleado(string userAdmin, string userEmpleado, bool mostrarBoton)
+        public IActionResult IndexEmpleado(string userAdmin, string passwordAdmin, string userEmpleado, bool mostrarBoton)
         {
             CombinedViewModel views = new CombinedViewModel();
 
@@ -65,6 +65,7 @@ namespace AWSDB.Controllers
             //views.NewCA = getClaseArticulo;
             //views.LeadDetails = getArticulo;
             views.NombreAdmin = userAdmin;
+            views.PasswordAdmin = passwordAdmin;
             views.NombreEmpleado = userEmpleado;
             views.showButton = mostrarBoton;
             return View(views);
@@ -253,11 +254,21 @@ namespace AWSDB.Controllers
             return RedirectToAction("Upload", "Home");
         }
 
-        public IActionResult Ingresar(CombinedViewModel model)
+        public IActionResult Ingresar(int identificar, int mostrarBoton1, string UserEmpleado, string PasswordEmpleado, string UserAdmin, CombinedViewModel model) //Identificar indica si es un login normal(0) o desde personificar(1)
         {
-            string Username = model.NombreAdmin;
-            string password = model.PasswordAdmin;
 
+            string Username;
+            string password;
+            if (identificar == 1)
+            {
+                Username = UserEmpleado;
+                password = PasswordEmpleado;
+            }
+            else
+            {
+                Username = model.NombreAdmin;
+                password = model.PasswordAdmin;
+            }
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -284,15 +295,21 @@ namespace AWSDB.Controllers
                         TempData["Message"] = "Combinacion de usuario/password no existe en la BD";
                         return RedirectToAction("Login", "Home");
                     }
-                    else if (adminOEmpleado == 50004){
+                    else if (adminOEmpleado == 50004) {
                         TempData["Message"] = "Login de administrador exitoso";
                         return RedirectToAction("Index", "Home", new { userAdmin = Username, userEmpleado = "" });
                     }
-                    else 
+                    else
                     {
                         TempData["Message"] = "Login exitoso";
-                        return RedirectToAction("IndexEmpleado", "Home", new { userAdmin = "", userEmpleado = Username });
-
+                        if (mostrarBoton1 == 1)
+                        {
+                            return RedirectToAction("IndexEmpleado", "Home", new { userAdmin = UserAdmin, userEmpleado = Username, mostrarBoton = true });
+                        }
+                        else
+                        {
+                            return RedirectToAction("IndexEmpleado", "Home", new { userAdmin = "", userEmpleado = Username });
+                        }
                     }
                 }
             }
@@ -464,6 +481,7 @@ namespace AWSDB.Controllers
             TempData["Message"] = "Por favor, seleccione un archivo.";
             return RedirectToAction("VistaUpload");
         }
+
         public async Task<IActionResult> UploadSimular(ArchivoViewModel model)
         {
             if (model.Archivo != null && model.Archivo.Length > 0)
@@ -484,13 +502,12 @@ namespace AWSDB.Controllers
                             // Pasa el contenido XML como parámetro
                             command.Parameters.AddWithValue("@inDatos", xmlContent);
 
-                            // Configura el parámetro de salida para capturar la contraseña
-                            command.Parameters.Add("@outResult", SqlDbType.VarChar, 128).Direction = ParameterDirection.Output;
+                            command.Parameters.Add("@outResult", SqlDbType.Int).Direction = ParameterDirection.Output;
 
                             command.ExecuteNonQuery();
 
                             // Obtener la contraseña del parámetro de salida
-                            string ERROR = Convert.ToString(command.Parameters["@outResult"].Value);
+                            int resultCode = Convert.ToInt32(command.Parameters["@outResult"].Value);
 
                             // Realiza acciones adicionales si es necesario
                             connection.Close();
@@ -505,17 +522,37 @@ namespace AWSDB.Controllers
             TempData["Message"] = "Por favor, seleccione un archivo.";
             return RedirectToAction("VistaUpload");
         }
-
-        public IActionResult prueba(CombinedViewModel model)
+        public IActionResult Personificar(int IdEmpleado, CombinedViewModel model)
         {
-            string UsernameAdmin = model.NombreAdmin;
-            string passwordAdmin = model.PasswordAdmin;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
 
-            string UsernameEmpleado = model.NombreEmpleado;
-            string passwordEmpleado = model.PasswordEmpleado;
+                using (SqlCommand command = new SqlCommand("ObtenerDatosEmpleado", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@inIdEmpleado", IdEmpleado);
+                    command.Parameters.Add("@outUsuario", SqlDbType.VarChar, 128).Direction = ParameterDirection.Output;
+                    command.Parameters.Add("@outPassword", SqlDbType.VarChar, 128).Direction = ParameterDirection.Output;
+                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
+
+                    command.ExecuteNonQuery();
+
+                    string Usuario = Convert.ToString(command.Parameters["@outUsuario"].Value);
+                    string Password = Convert.ToString(command.Parameters["@outPassword"].Value);
+                    int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
+
+                    string UsernameAdmin = model.NombreAdmin;
+                    string passwordAdmin = model.PasswordAdmin;
 
 
-            return RedirectToAction("IndexEmpleado", "Home", new { userAdmin = UsernameAdmin, userEmpleado = UsernameEmpleado, mostrarBoton=true});
+                    return RedirectToAction("Ingresar", "Home", new { identificar = 1, mostrarBoton1 = 1, UserEmpleado = Usuario, PasswordEmpleado = Password, UserAdmin = UsernameAdmin });
+
+                }
+            }
+
+            
         }
 
         //---------------------------------------------------FUNCIONES EMPLEADO---------------------------------------------------

@@ -49,6 +49,10 @@
         <label asp-for="NombreAdmin">@Model.NombreAdmin</label>
         <input asp-for="NombreAdmin" class="form-control" />
     </div>
+    <div class="form-group" style="display:none;">
+        <label asp-for="PasswordAdmin">@Model.PasswordAdmin</label>
+        <input asp-for="PasswordAdmin" class="form-control" />
+    </div>
 </form>
 @if (TempData["Message"] != null) 
 {
