@@ -12,7 +12,7 @@
                         <th>Dia</th>
                         <th>Hora Entrada</th>
                         <th>Hora Salida</th>
-                        <th>Horas Ordinarios</th>
+                        <th>Horas Ordinarias</th>
                         <th>Monto</th>
                         <th>Horas Extras</th>
                         <th>Monto</th>
@@ -21,20 +21,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @*@foreach (var item in Model.LeadDetails)
+                    @foreach (var item in Model.SemanalBruto)
                     {
                         <tr>
-                            <td>@item.Codigo</td>
-                            <td>@item.Nombre</td>
-                            <td>@item.ClaseArticulo</td>
-                         
+                            <td>@item.diaSemana</td>
+                            <td>@item.horaEntrada</td>
+                            <td>@item.horaSalida</td>
+                            <td>@item.horas</td>
+                            <td>@item.montoHoras</td>
+                            <td>@item.horasExtras</td>
+                            <td>@item.montoExtras</td>
+                            <td>@item.horasDobles</td>
+                            <td>@item.montoDobles</td>
                         </tr>
-                    }*@
+                    }
                 </tbody>
                 <tbody>
 
 					<div class="input-group-append">
-                        <button asp-action="" type="submit" class="btn btn-primary">Regresar</button>
+                        <button asp-action="VolverSemanalB" type="submit" class="btn btn-primary">Regresar</button>
 					</div>
 
 				</tbody>
@@ -44,6 +49,14 @@
     <div class="form-group" style="display:none;">
         <label asp-for="NombreEmpleado">@Model.NombreEmpleado</label>
         <input asp-for="NombreEmpleado" class="form-control" />
+    </div>
+    <div class="form-group" style="display:none;">
+        <label asp-for="NombreAdmin">@Model.NombreAdmin</label>
+        <input asp-for="NombreAdmin" class="form-control" />
+    </div>
+    <div class="form-group" style="display:none;">
+        <label asp-for="showButton">@Model.showButton</label>
+        <input asp-for="showButton" class="form-control" />
     </div>
 </form>
 @if (TempData["Message"] != null) 

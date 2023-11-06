@@ -1,7 +1,7 @@
 ﻿@model CombinedViewModel
 <form asp-controller="IndexConsulMensual" method="post">
     <div>
-        <label class="Titulo-IndexU">Bienvenido/a empleado</label>
+        <label class="Titulo-IndexU">Planilla Mensual</label>
     </div>
 
     <div class="row">
@@ -28,13 +28,10 @@
                 <tbody>
 
                     <div class="input-group-append">
-                        <button asp-action="" type="submit" class="btn btn-primary">Consultar planilla semanal</button>
-                        <button asp-action="" type="submit" class="btn btn-primary">Consultar planilla mensual</button>
-                        <button asp-action="VolverLogin" type="submit" class="btn btn-primary">Salir</button>
-                        @if (Model.showButton == true)
-                        {
-                            <button asp-action="" id="botonRegresar" type="submit" class="btn btn-primary">Regresar</button>
-                        }
+
+                        <button asp-action="VolverEmpleado2" id="botonRegresar" type="submit" class="btn btn-primary">Regresar</button>
+
+                        
                     </div>
 
                 </tbody>
@@ -44,6 +41,14 @@
     <div class="form-group" style="display:none;">
         <label asp-for="NombreEmpleado">@Model.NombreEmpleado</label>
         <input asp-for="NombreEmpleado" class="form-control" />
+    </div>
+    <div class="form-group" style="display:none;">
+        <label asp-for="NombreAdmin">@Model.NombreAdmin</label>
+        <input asp-for="NombreAdmin" class="form-control" />
+    </div>
+    <div class="form-group" style="display:none;">
+        <label asp-for="showButton">@Model.showButton</label>
+        <input asp-for="showButton" class="form-control" />
     </div>
 </form>
 @if (TempData["Message"] != null) 

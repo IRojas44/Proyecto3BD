@@ -131,7 +131,7 @@ public class CombinedViewModel
 
     public List<AWSDB.Models.TipoDepartamento> NewD { get; set; }
 
-    public bool showButton { get; set; }
+    public int showButton { get; set; }
 
     public string Codigo { get; set;}
 
@@ -150,6 +150,8 @@ public class CombinedViewModel
     public string PasswordEmpleado { get; set; }
 
     public int IdEmpleado { get; set; }
+
+    public int IdPlanilla { get; set; }
 }
 
 public class Articulo

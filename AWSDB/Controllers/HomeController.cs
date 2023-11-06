@@ -56,7 +56,7 @@ namespace AWSDB.Controllers
             return View(views);
         }
 
-        public IActionResult IndexEmpleado(string userAdmin, string passwordAdmin, string userEmpleado, bool mostrarBoton)
+        public IActionResult IndexEmpleado(string userAdmin, string passwordAdmin, string userEmpleado, int mostrarBoton)
         {
             CombinedViewModel views = new CombinedViewModel();
 
@@ -149,6 +149,34 @@ namespace AWSDB.Controllers
 
         }
 
+        public IActionResult VolverLogin2(CombinedViewModel model)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand command = new SqlCommand("Salir", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    if (model.NombreAdmin != "")
+                    {
+                        command.Parameters.AddWithValue("@inUserName", model.NombreEmpleado);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@inUserName", model.NombreEmpleado);
+                    }
+                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    command.ExecuteNonQuery();
+
+                    return RedirectToAction("Login", "Home");
+
+                }
+            }
+
+        }
+
         public IActionResult Login()
         {
             return View();
@@ -197,6 +225,11 @@ namespace AWSDB.Controllers
             views.IdEmpleado = IdEmpleado;
             views.NombreAdmin = userAdmin;
             return View(views);
+        }
+
+        public IActionResult VolverEmpleado(CombinedViewModel model)
+        {
+            return RedirectToAction("Index", "Home", new { userAdmin = model.NombreAdmin, userEmpleado =""}); ;
         }
 
         public IActionResult EditarV(int id ,CombinedViewModel model)
@@ -290,7 +323,7 @@ namespace AWSDB.Controllers
 
                     //int resultCode = 3335;
                     connection.Close();
-                    if (resultCode == 50002)
+                    if (resultCode == 50002 || resultCode == 50001)
                     {
                         TempData["Message"] = "Combinacion de usuario/password no existe en la BD";
                         return RedirectToAction("Login", "Home");
@@ -304,7 +337,7 @@ namespace AWSDB.Controllers
                         TempData["Message"] = "Login exitoso";
                         if (mostrarBoton1 == 1)
                         {
-                            return RedirectToAction("IndexEmpleado", "Home", new { userAdmin = UserAdmin, userEmpleado = Username, mostrarBoton = true });
+                            return RedirectToAction("IndexEmpleado", "Home", new { userAdmin = UserAdmin, userEmpleado = Username, mostrarBoton = 1 });
                         }
                         else
                         {
@@ -558,7 +591,7 @@ namespace AWSDB.Controllers
         //---------------------------------------------------FUNCIONES EMPLEADO---------------------------------------------------
        
 
-        public IActionResult IndexConsulMensual(string userEmpleado)
+        public IActionResult IndexConsulMensual(string userEmpleado, string userAdmin, int mostrarBoton)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -590,6 +623,8 @@ namespace AWSDB.Controllers
                         views.PlanillaMensual = ConsulMensual;
                         views.NombreAdmin = "";
                         views.NombreEmpleado = userEmpleado;
+                        views.NombreAdmin = userAdmin;
+                        views.showButton = mostrarBoton;
                         return View(views);
                     }
                 }
@@ -602,15 +637,15 @@ namespace AWSDB.Controllers
             {
                 return RedirectToAction("IndexEmpleado", "Home", new { userAdmin = model.NombreAdmin, userEmpleado = model.NombreEmpleado });
             }
-            return RedirectToAction("IndexConsulMensual", "Home", new { userEmpleado = model.NombreEmpleado });
+            return RedirectToAction("IndexConsulMensual", "Home", new { userEmpleado = model.NombreEmpleado, userAdmin = model.NombreAdmin, mostrarBoton = model.showButton });
         }
 
-        public IActionResult MensualDeducciones(string userEmpleado, int idPlanilla)
+        public IActionResult MensualDeducciones(string userEmpleado, string userAdmin, int idPlanilla, int mostrarBoton)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("ObtenerPlanillaMensual", connection))
+                using (SqlCommand command = new SqlCommand("ObtenerDeduccionMensual", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@inUserName", userEmpleado);
@@ -638,6 +673,9 @@ namespace AWSDB.Controllers
                         views.mensualDeducciones = DeduccionesMensual;
                         views.NombreAdmin = "";
                         views.NombreEmpleado = userEmpleado;
+                        views.NombreAdmin = userAdmin;
+                        views.IdPlanilla = idPlanilla;
+                        views.showButton = mostrarBoton;
                         return View(views);
                     }
                 }
@@ -645,15 +683,15 @@ namespace AWSDB.Controllers
         }
         public IActionResult MensualDeduccionesV(int id, CombinedViewModel model)
         {
-            return RedirectToAction("MensualDeducciones", "Home", new { userEmpleado = model.NombreEmpleado, idPlanilla = id });
+            return RedirectToAction("MensualDeducciones", "Home", new { userEmpleado = model.NombreEmpleado, userAdmin = model.NombreAdmin, idPlanilla = id, mostrarBoton = model.showButton });
         }
 
-        public IActionResult IndexConsulSem(string userEmpleado)
+        public IActionResult IndexConsulSem(string userEmpleado, string userAdmin, int mostrarBoton)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("ObtenerPlanillaMensual", connection))
+                using (SqlCommand command = new SqlCommand("ObtenerPlanillaSemanal", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@inUserName", userEmpleado);
@@ -683,6 +721,8 @@ namespace AWSDB.Controllers
                         views.PlanillaSemanal = ConsulSemanal;
                         views.NombreAdmin = "";
                         views.NombreEmpleado = userEmpleado;
+                        views.NombreAdmin = userAdmin;
+                        views.showButton = mostrarBoton;
                         return View(views);
                     }
                 }
@@ -695,10 +735,10 @@ namespace AWSDB.Controllers
             {
                 return RedirectToAction("IndexEmpleado", "Home", new { userAdmin = model.NombreAdmin, userEmpleado = model.NombreEmpleado });
             }
-            return RedirectToAction("IndexConsulSem", "Home", new { userEmpleado = model.NombreEmpleado });
+            return RedirectToAction("IndexConsulSem", "Home", new { userEmpleado = model.NombreEmpleado, userAdmin = model.NombreAdmin, mostrarBoton = model.showButton });
         }
 
-        public IActionResult SemanalBruto(string userEmpleado, int idPlanilla)
+        public IActionResult SemanalBruto(string userEmpleado, string userAdmin, int idPlanilla, int mostrarBoton)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -737,17 +777,20 @@ namespace AWSDB.Controllers
                         views.SemanalBruto = semanalBruto;
                         views.NombreAdmin = "";
                         views.NombreEmpleado = userEmpleado;
+                        views.NombreAdmin = userAdmin;
+                        views.IdPlanilla = idPlanilla;
+                        views.showButton = mostrarBoton;
                         return View(views);
                     }
                 }
             }
         }
-        public IActionResult SemDeduccionesV(int id, CombinedViewModel model)
-        {
-            return RedirectToAction("SemanalBruto", "Home", new { userEmpleado = model.NombreEmpleado, idPlanilla = id });
-        }
 
-        public IActionResult SemanalDeducciones(string userEmpleado, int idPlanilla)
+        public IActionResult SemBrutoV(int id, CombinedViewModel model)
+        {
+            return RedirectToAction("SemanalBruto", "Home", new { userEmpleado = model.NombreEmpleado, userAdmin = model.NombreAdmin, idPlanilla = id, mostrarBoton = model.showButton });
+        }
+        public IActionResult SemanalDeducciones(string userEmpleado, string userAdmin, int idPlanilla, int mostrarBoton)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -756,7 +799,7 @@ namespace AWSDB.Controllers
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@inUserName", userEmpleado);
-                    command.Parameters.AddWithValue("@inIdPlanillaMensual", idPlanilla);
+                    command.Parameters.AddWithValue("@inIdPlanillaSemanal", idPlanilla);
                     command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
@@ -780,14 +823,34 @@ namespace AWSDB.Controllers
                         views.semanalDeducciones = DeduccionesSemanal;
                         views.NombreAdmin = "";
                         views.NombreEmpleado = userEmpleado;
+                        views.NombreAdmin = userAdmin;
+                        views.IdPlanilla = idPlanilla;
+                        views.showButton = mostrarBoton;
                         return View(views);
                     }
                 }
             }
         }
-        public IActionResult SemBrutoV(int id, CombinedViewModel model)
+
+        public IActionResult SemDeduccionesV(int id, CombinedViewModel model)
         {
-            return RedirectToAction("SemanalDeducciones", "Home", new { userEmpleado = model.NombreEmpleado, idPlanilla = id });
+            return RedirectToAction("SemanalDeducciones", "Home", new { userEmpleado = model.NombreEmpleado, userAdmin = model.NombreAdmin, idPlanilla = id, mostrarBoton = model.showButton });
+        }
+        public IActionResult VolverEmpleado2(CombinedViewModel model)
+        {
+            return RedirectToAction("IndexEmpleado", "Home", new { userAdmin = model.NombreAdmin, passwordAdmin = model.PasswordAdmin, userEmpleado = model.NombreEmpleado,  mostrarBoton = model.showButton}); 
+        }
+        public IActionResult VolverMensualD(CombinedViewModel model)
+        {
+            return RedirectToAction("IndexConsulMensual", "Home", new { userEmpleado = model.NombreEmpleado, userAdmin = model.NombreAdmin, mostrarBoton = model.showButton });
+        }
+        public IActionResult VolverSemanalB(CombinedViewModel model)
+        {
+            return RedirectToAction("IndexConsulSem", "Home", new { userEmpleado = model.NombreEmpleado, userAdmin = model.NombreAdmin, mostrarBoton = model.showButton });
+        }
+        public IActionResult VolverSemanalD(CombinedViewModel model)
+        {
+            return RedirectToAction("IndexConsulSem", "Home", new { userEmpleado = model.NombreEmpleado, userAdmin = model.NombreAdmin, mostrarBoton = model.showButton });
         }
     }
 }

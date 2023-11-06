@@ -15,7 +15,7 @@
                     <tr>
                     <td>@item.Nombre</td>
                     <td>@item.Puesto</td>
-                    <td><button asp-action="EditarV" type="submit" class="btn btn-primary">Editar este empleado/a</button></td>
+                    <td><button asp-action="EditarV" type="submit" asp-route-Id="@item.id" class="btn btn-primary">Editar este empleado/a</button></td>
                     </tr>
                     }
                 </tbody>
