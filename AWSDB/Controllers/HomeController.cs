@@ -132,7 +132,7 @@ namespace AWSDB.Controllers
                 {
                     command.CommandType = CommandType.StoredProcedure;
 
-                    if(model.NombreAdmin != "") {
+                    if(model.NombreAdmin != null) {
                         command.Parameters.AddWithValue("@inUserName", model.NombreAdmin);
                     }
                     else
@@ -141,6 +141,8 @@ namespace AWSDB.Controllers
                     }
                     command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
                     command.ExecuteNonQuery();
+
+                    connection.Close();
 
                     return RedirectToAction("Login", "Home");
 
@@ -155,22 +157,17 @@ namespace AWSDB.Controllers
             {
                 connection.Open();
 
-                using (SqlCommand command = new SqlCommand("Salir", connection))
+                using (SqlCommand command = new SqlCommand("VolverInterfazAdmin", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-
-                    if (model.NombreAdmin != "")
-                    {
-                        command.Parameters.AddWithValue("@inUserName", model.NombreEmpleado);
-                    }
-                    else
-                    {
-                        command.Parameters.AddWithValue("@inUserName", model.NombreEmpleado);
-                    }
+                    command.Parameters.AddWithValue("@inUserName", model.NombreEmpleado);
+     
                     command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
                     command.ExecuteNonQuery();
 
-                    return RedirectToAction("Login", "Home");
+                    connection.Close();
+
+                    return RedirectToAction("Index", "Home", new { userAdmin = model.NombreAdmin, userEmpleado = model.NombreEmpleado });
 
                 }
             }
@@ -561,6 +558,26 @@ namespace AWSDB.Controllers
             {
                 connection.Open();
 
+                using (SqlCommand command = new SqlCommand("Impersonar", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@inIdEmpleado", IdEmpleado);
+                    command.Parameters.Add("@outResultCode", SqlDbType.Int).Direction = ParameterDirection.Output;
+
+                    command.ExecuteNonQuery();
+
+
+                    int resultCode = Convert.ToInt32(command.Parameters["@outResultCode"].Value);
+
+                    connection.Close();
+                }
+            }
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
                 using (SqlCommand command = new SqlCommand("ObtenerDatosEmpleado", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
@@ -578,6 +595,8 @@ namespace AWSDB.Controllers
 
                     string UsernameAdmin = model.NombreAdmin;
                     string passwordAdmin = model.PasswordAdmin;
+
+                    connection.Close();
 
 
                     return RedirectToAction("Ingresar", "Home", new { identificar = 1, mostrarBoton1 = 1, UserEmpleado = Usuario, PasswordEmpleado = Password, UserAdmin = UsernameAdmin });
