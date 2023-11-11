@@ -87,6 +87,7 @@ namespace AWSDB.Controllers
                         while (reader.Read())
                         {
                             LeadDetailsEntity resultEmpleado = new LeadDetailsEntity();
+                            resultEmpleado.id = Convert.ToInt32(reader["Id"]);
                             resultEmpleado.Nombre = reader["Nombre"].ToString();
                             resultEmpleado.Puesto = reader["Puesto"].ToString();
 
@@ -493,7 +494,7 @@ namespace AWSDB.Controllers
                             command.Parameters.AddWithValue("@inDatos", xmlContent);
 
                             // Configura el parámetro de salida para capturar la contraseña
-                            command.Parameters.Add("OutResult", SqlDbType.VarChar, 128).Direction = ParameterDirection.Output;
+                            command.Parameters.Add("@outResult", SqlDbType.Int).Direction = ParameterDirection.Output;
 
                             command.ExecuteNonQuery();
 
