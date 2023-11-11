@@ -599,9 +599,16 @@ namespace AWSDB.Controllers
 
                     connection.Close();
 
+                    if (Usuario == "")
+                    {
+                        TempData["Message"] = "Este usuario no tiene nombre de usuario";
+                        return RedirectToAction("Index", "Home", new { userAdmin = model.NombreAdmin, userEmpleado = model.NombreEmpleado });
 
-                    return RedirectToAction("Ingresar", "Home", new { identificar = 1, mostrarBoton1 = 1, UserEmpleado = Usuario, PasswordEmpleado = Password, UserAdmin = UsernameAdmin });
-
+                    }
+                    else
+                    {
+                        return RedirectToAction("Ingresar", "Home", new { identificar = 1, mostrarBoton1 = 1, UserEmpleado = Usuario, PasswordEmpleado = Password, UserAdmin = UsernameAdmin });
+                    }
                 }
             }
 
