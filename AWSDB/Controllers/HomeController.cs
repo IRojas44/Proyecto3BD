@@ -686,7 +686,7 @@ namespace AWSDB.Controllers
                             MensualDeducciones result = new MensualDeducciones();
                             result.id = Convert.ToInt32(reader["id"]);
                             result.nombre = reader["Nombre"].ToString();
-                            result.porcentaje = Convert.ToInt32(reader["Porcentaje"]);
+                            result.porcentaje = Convert.ToDecimal(reader["Porcentaje"]);
                             result.monto = Convert.ToInt32(reader["Monto"]);
 
                             DeduccionesMensual.Add(result);
@@ -836,7 +836,7 @@ namespace AWSDB.Controllers
                             SemanalDeducciones result = new SemanalDeducciones();
                             result.id = Convert.ToInt32(reader["id"]);
                             result.nombre = reader["Nombre"].ToString();
-                            result.porcentaje = Convert.ToInt32(reader["Porcentaje"]);
+                            result.porcentaje = Convert.ToDecimal(reader["Porcentaje"]);
                             result.monto = Convert.ToInt32(reader["Monto"]);
 
                             DeduccionesSemanal.Add(result);

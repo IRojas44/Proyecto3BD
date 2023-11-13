@@ -59,7 +59,7 @@ namespace AWSDB.Models
 
         public string nombre { get; set; }
 
-        public int porcentaje { get; set; }
+        public decimal porcentaje { get; set; }
 
         public int monto { get; set; }
     }
@@ -105,7 +105,7 @@ namespace AWSDB.Models
 
         public string nombre { get; set; }
 
-        public int porcentaje { get; set; }
+        public decimal porcentaje { get; set; }
 
         public int monto { get; set; }
     }
